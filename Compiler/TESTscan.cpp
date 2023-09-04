@@ -59,7 +59,7 @@ int TESTscan(string pathIn, string pathOut) {
 	ifstream ifs;
 	ifs.open(pathIn.c_str());
 	if (!ifs) {
-		error(FILENOTFOUND, ifs);
+		error(FILENOTFOUND, &ifs, 0, pathIn);
 		return FILENOTFOUND;
 	}
 
@@ -85,7 +85,7 @@ int TESTscan(string pathIn, string pathOut) {
 				if (testSingleword(tmp) || testDoubleword(tmp)) break;
 				if(testWord(tmp)) kw.push_back(tmp);
 				else {
-					error(WORDERROR, ifs);
+					error(WORDERROR, &ifs);
 					return WORDERROR;
 				}
 			}
@@ -116,7 +116,7 @@ int TESTscan(string pathIn, string pathOut) {
 				if (!notZero) continue;
 				if ('0' <= tmp && tmp <= '9') num.push_back(tmp);
 				else {
-					error(WORDERROR, ifs);
+					error(WORDERROR, &ifs);
 					return WORDERROR;
 				}
 			}
@@ -147,7 +147,7 @@ int TESTscan(string pathIn, string pathOut) {
 						}
 					}
 					if (tmp == EOF) {
-						error(WORDERROR, ifs);
+						error(WORDERROR, &ifs);
 						return WORDERROR;
 					}
 				}
@@ -155,7 +155,7 @@ int TESTscan(string pathIn, string pathOut) {
 				continue;
 			}
 			if (tmp == '*' && next == '/') {
-				error(WORDERROR, ifs, -1);
+				error(WORDERROR, &ifs, -1);
 				return WORDERROR;
 			}
 			if (tmp != '/' && tmp != '*' && next == '=') {
@@ -168,13 +168,16 @@ int TESTscan(string pathIn, string pathOut) {
 		
 		if (testWord(tmp)) id.push_back(tmp);
 		else {
-			error(WORDERROR, ifs);
+			error(WORDERROR, &ifs);
 			return WORDERROR;
 		}
 	}
 	ofstream ofs;
 	ofs.open(pathOut.c_str());
-
+	if (!ofs) {
+		error(FILENOTFOUND, nullptr, 0, pathOut);
+		return FILENOTFOUND;
+	}
 	output(ofs);
 	ifs.close();
 	ofs.flush();

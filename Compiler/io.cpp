@@ -49,18 +49,21 @@ void output(ofstream& ofs)
 }
 
 // ¥ÌŒÛ¥¶¿Ì
-void error(int type, ifstream& ifs, int shift) {
+void error(int type, ifstream* ifs, int shift, string info) {
 	if (type == WORDERROR) {
 		cout << "Word Error in line " << line << ":" << endl;
 		char tmp;
 		int idx = scanIn.size() - 1 + shift;
 		int errorIdx = idx;
 		while (scanIn[idx - 1] != '\n') idx--;
-		while ((tmp = getch(ifs)) != '\n' && tmp != EOF);
+		while ((tmp = getch(*ifs)) != '\n' && tmp != EOF);
 		for (int i = idx; i < scanIn.size(); i++) cout << scanIn[i];
 		if (scanIn[scanIn.size() - 1] != '\n') cout << endl;
 		for (int i = idx; i < errorIdx - 2; i++) cout << ' ';
 		cout << "~~^~~" << endl;
 		cout << "Unexpected character found '" << scanIn[errorIdx] << "'" << endl;
+	}
+	if (type == FILENOTFOUND) {
+		cout << "File not found" << (info.size() ? (": " + info) : "") << endl;
 	}
 }
