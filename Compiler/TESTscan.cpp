@@ -1,8 +1,8 @@
 #include "TESTscan.h"
 
 string keyword[KEYWORDNUM] = {"if", "int", "else", "for", "while", "write", "do", "read"};
-string singleword = "+-*(){};,:";
-string doubleword = "><=!/";
+string singleword = "+-(){};,:";
+string doubleword = "><=!/*";
 
 // ืชปปฮชะกะด
 char lowerCase(char c) {
@@ -113,33 +113,26 @@ int TESTscan(string pathIn, string pathOut) {
 			dw.push_back(tmp);
 			if (tmp == '/' && next == '*') {
 				// ืขสอ
-				bool innerComment = false;
 				while (tmp = getch(ifs)) {
-					if (innerComment) {
-						if (tmp == '*') {
-							error(SYNTAXERROR, ifs);
-							return SYNTAXERROR;
+					if (tmp == '*') {
+						next = getch(ifs);
+						if (next == '/') {
+							break;
 						}
-						innerComment = false;
 					}
 					if (tmp == EOF) {
 						error(SYNTAXERROR, ifs);
 						return SYNTAXERROR;
 					}
-					if (tmp == '*') {
-						next = ifs.get();
-						if (next == EOF) {
-							error(SYNTAXERROR, ifs);
-							return SYNTAXERROR;
-						}
-						if (next == '/') break;
-					}
-					if (tmp == '/') innerComment = true;
 				}
 				next = '\0';
 				continue;
 			}
-			if (tmp != '/' && next == '=') {
+			if (tmp == '*' && next == '/') {
+				error(SYNTAXERROR, ifs, -1);
+				return SYNTAXERROR;
+			}
+			if (tmp != '/' && tmp != '*' && next == '=') {
 				dw.push_back(next);
 				next = '\0';
 			}

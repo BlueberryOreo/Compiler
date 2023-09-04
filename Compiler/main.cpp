@@ -1,6 +1,6 @@
 #include "TESTscan.h"
 
-#define NINPUTPATH "E:\\Progress\\Compiler\\school\\test.T"
+#define INPUTPATH "E:\\Progress\\Compiler\\school\\test.T"
 #define OUTPUTPATH "E:\\Progress\\Compiler\\school\\out.T"
 
 int main() {
