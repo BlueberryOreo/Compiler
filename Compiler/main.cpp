@@ -1,6 +1,6 @@
 #include "TESTscan.h"
 
-#define INPUTPATH "E:\\Progress\\Compiler\\school\\test.T"
+#define NINPUTPATH "E:\\Progress\\Compiler\\school\\test.T"
 #define OUTPUTPATH "E:\\Progress\\Compiler\\school\\out.T"
 
 int main() {
@@ -10,7 +10,10 @@ int main() {
 	inputPath = INPUTPATH;
 	outputPath = OUTPUTPATH;
 #else
-	cin >> inputPath >> outputPath;
+	cout << "请输入输入文件位置:" << endl;
+	cin >> inputPath;
+	cout << "请输入输出文件位置:" << endl;
+	cin >> outputPath;
 #endif
 	
 	int err = TESTscan(inputPath, outputPath);
