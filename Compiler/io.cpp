@@ -50,8 +50,8 @@ void output(ofstream& ofs)
 
 // ´íÎó´¦Àí
 void error(int type, ifstream& ifs, int shift) {
-	if (type == SYNTAXERROR) {
-		cout << "Syntax Error in line " << line << ":" << endl;
+	if (type == WORDERROR) {
+		cout << "Word Error in line " << line << ":" << endl;
 		char tmp;
 		int idx = scanIn.size() - 1 + shift;
 		int errorIdx = idx;

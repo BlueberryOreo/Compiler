@@ -10,6 +10,12 @@ char lowerCase(char c) {
 	return c;
 }
 
+void lowerCase(string &s) {
+	for (int i = 0; i < s.size(); i ++) {
+		s[i] = lowerCase(s[i]);
+	}
+}
+
 // 判断是否可能为关键字
 int testKeyword(char c) {
 	for (int i = 0; i < KEYWORDNUM; i ++) {
@@ -34,6 +40,21 @@ int testDoubleword(char c) {
 	return 0;
 }
 
+bool testWord(char c) {
+	if (('a' <= c && c <= 'z') ||
+		('A' <= c && c <= 'Z') ||
+		('0' <= c && c <= '9') || 
+		c == '_')
+		return true;
+	return false;
+}
+
+// 判断空字符
+bool testBlank(char c) {
+	if (c == ' ' || c == '\t' || c == '\n') return true;
+	return false;
+}
+
 int TESTscan(string pathIn, string pathOut) {
 	ifstream ifs;
 	ifs.open(pathIn.c_str());
@@ -49,7 +70,7 @@ int TESTscan(string pathIn, string pathOut) {
 			tmp = next;
 			next = '\0';
 		}
-		if (tmp == ' ' || tmp == '\n') {
+		if (testBlank(tmp)) {
 			testId(id);
 			continue;
 		}
@@ -58,21 +79,26 @@ int TESTscan(string pathIn, string pathOut) {
 		if (kwIndex >= 0) {
 			// 可能是关键字
 			string kw = "";
-			kw.push_back(lowerCase(tmp));
+			kw.push_back(tmp);
 			while (tmp = getch(ifs)) {
-				if (tmp == ' ' || tmp == '\n' || tmp == EOF) break;
+				if (testBlank(tmp) || tmp == EOF) break;
 				if (testSingleword(tmp) || testDoubleword(tmp)) break;
-				kw.push_back(lowerCase(tmp));
+				if(testWord(tmp)) kw.push_back(tmp);
+				else {
+					error(WORDERROR, ifs);
+					return WORDERROR;
+				}
 			}
 			if (kw == keyword[kwIndex] ||
 				(kwIndex + 1 < KEYWORDNUM && kw == keyword[kwIndex + 1]))
 			{
+				lowerCase(kw);
 				outputKw(kw);
 			}
 			else {
 				id += kw;
 			}
-			if (tmp == ' ' || tmp == '\n' || tmp == EOF) continue;
+			if (testBlank(tmp) || tmp == EOF) continue;
 		}
 
 		// 判断数字
@@ -84,14 +110,14 @@ int TESTscan(string pathIn, string pathOut) {
 				num.push_back(tmp);
 			}
 			while (tmp = getch(ifs)) {
-				if (tmp == ' ' || tmp == '\n' || tmp == EOF) break;
+				if (testBlank(tmp) || tmp == EOF) break;
 				if (testSingleword(tmp) || testDoubleword(tmp)) break;
 				if (tmp != '0') notZero = true;
 				if (!notZero) continue;
 				if ('0' <= tmp && tmp <= '9') num.push_back(tmp);
 				else {
-					error(SYNTAXERROR, ifs);
-					return SYNTAXERROR;
+					error(WORDERROR, ifs);
+					return WORDERROR;
 				}
 			}
 			if (num.size() == 0) num.push_back('0');
@@ -121,16 +147,16 @@ int TESTscan(string pathIn, string pathOut) {
 						}
 					}
 					if (tmp == EOF) {
-						error(SYNTAXERROR, ifs);
-						return SYNTAXERROR;
+						error(WORDERROR, ifs);
+						return WORDERROR;
 					}
 				}
 				next = '\0';
 				continue;
 			}
 			if (tmp == '*' && next == '/') {
-				error(SYNTAXERROR, ifs, -1);
-				return SYNTAXERROR;
+				error(WORDERROR, ifs, -1);
+				return WORDERROR;
 			}
 			if (tmp != '/' && tmp != '*' && next == '=') {
 				dw.push_back(next);
@@ -140,12 +166,10 @@ int TESTscan(string pathIn, string pathOut) {
 			continue;
 		}
 		
-		if (('a' <= tmp && tmp <= 'z') ||
-			('A' <= tmp && tmp <= 'Z') ||
-			('0' <= tmp && tmp <= '9') || tmp == '_') id.push_back(tmp);
+		if (testWord(tmp)) id.push_back(tmp);
 		else {
-			error(SYNTAXERROR, ifs);
-			return SYNTAXERROR;
+			error(WORDERROR, ifs);
+			return WORDERROR;
 		}
 	}
 	ofstream ofs;

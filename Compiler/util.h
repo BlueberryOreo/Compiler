@@ -5,6 +5,6 @@ using namespace std;
 
 #define SUCCESS 0
 #define FILENOTFOUND 1
-#define SYNTAXERROR 2
+#define WORDERROR 2
 
 #define KEYWORDNUM 8
