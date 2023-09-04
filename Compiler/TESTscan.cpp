@@ -143,10 +143,6 @@ int TESTscan(string pathIn, string pathOut) {
 				dw.push_back(next);
 				next = '\0';
 			}
-			else if (tmp == '!') {
-				error(SYNTAXERROR, ifs, -1);
-				return SYNTAXERROR;
-			}
 			outputDoubleWord(dw);
 			continue;
 		}
