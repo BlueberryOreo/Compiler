@@ -4,11 +4,13 @@ string keyword[KEYWORDNUM] = {"if", "int", "else", "for", "while", "write", "do"
 string singleword = "+-*(){};,:";
 string doubleword = "><=!/";
 
+// 转换为小写
 char lowerCase(char c) {
 	if ('A' <= c && c <= 'Z') return c + 32;
 	return c;
 }
 
+// 判断是否可能为关键字
 int testKeyword(char c) {
 	for (int i = 0; i < KEYWORDNUM; i ++) {
 		if (keyword[i][0] == lowerCase(c)) return i;
@@ -16,6 +18,7 @@ int testKeyword(char c) {
 	return -1;
 }
 
+// 判断是否可能为单分界符
 int testSingleword(char c) {
 	for (int i = 0; i < singleword.size(); i ++) {
 		if (singleword[i] == c) return 1;
@@ -23,6 +26,7 @@ int testSingleword(char c) {
 	return 0;
 }
 
+// 判断是否可能为双分界符
 int testDoubleword(char c) {
 	for (int i = 0; i < doubleword.size(); i ++) {
 		if (doubleword[i] == c) return 1;
