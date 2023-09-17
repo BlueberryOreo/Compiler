@@ -52,12 +52,13 @@ NFA NFA::Kleene(NFA& nfa)
 NFA NFA::MSE(RNode* now)
 {
 	if (now->children.size() == 0) {
+		// 是终结符，直接构造自动机
 		if (now->data == "|" || now->data == "*" || now->data == "(" || now->data == ")") return NFA();
 		return meta(now);
 	}
 	int childNum = now->children.size();
 	vector<NFA> nfas;
-	char type = 'c';
+	char type = 'c'; // 构造类型，c - 连接，u - 并，k - 闭包
 	for (int i = 0; i < childNum; i ++) {
 		RNode* child = now->children[i];
 		if (child->data == "|") {
@@ -68,7 +69,7 @@ NFA NFA::MSE(RNode* now)
 			type = 'k';
 			continue;
 		}
-		else if (child->data == "(" || child->data == ")") continue;
+		else if (child->data == "(" || child->data == ")") continue; // 是括号，略过
 		nfas.push_back(MSE(child));
 	}
 
