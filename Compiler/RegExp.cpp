@@ -142,9 +142,9 @@ RegExp::RegExp(string *defs, int size)
 	this->root = NULL; 
 	//this->initRegDef(defs, size); 
 	this->readTree();
-	this->outputTree(this->root);
+	//this->outputTree(this->root);
 	NFA nfa = NFA::MSE(this->root);
-	cout << NFA::id << endl;
+	nfa.outputNFA();
 }
 
 RegExp::~RegExp()

@@ -5,7 +5,7 @@
 // 不确定有限自动机
 class NFA
 {
-public:
+private:
 	static int id;
 	static int getId();
 

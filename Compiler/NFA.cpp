@@ -19,7 +19,12 @@ NFA NFA::meta(RNode* node)
 NFA NFA::Concatenation(NFA &nfa1, NFA &nfa2)
 {
 	NFA ret{};
-	nfa1.end = nfa2.start;
+	for (int i = 0; i < nfa2.start->edges.size(); i ++) {
+		// 将nfa2.start的所有边接到nfa1.end上
+		nfa1.end->edges.push_back(nfa2.start->edges[i]);
+	}
+	//nfa2.end->id = nfa2.start->id;
+	delete nfa2.start;
 	ret.start = nfa1.start;
 	ret.end = nfa2.end;
 	return ret;
@@ -54,6 +59,7 @@ NFA NFA::MSE(RNode* now)
 	if (now->children.size() == 0) {
 		// 是终结符，直接构造自动机
 		if (now->data == "|" || now->data == "*" || now->data == "(" || now->data == ")") return NFA();
+		cout << "meta" << " " << now->data << endl;
 		return meta(now);
 	}
 	int childNum = now->children.size();
@@ -97,8 +103,13 @@ void NFA::outputNFA()
 	while (!q.empty()) {
 		ANode* now = q.front();
 		q.pop();
+		if (visited[now->id]) continue;
+		visited[now->id] = 1;
+		cout << now->id << endl;
 		for (int i = 0; i < now->edges.size(); i ++) {
 			ANode* next = now->edges[i].to;
+			if (visited[next->id]) continue;
+			q.push(next);
 		}
 	}
 }
