@@ -143,13 +143,14 @@ RegExp::RegExp(string *defs, int size)
 	//this->initRegDef(defs, size); 
 	this->readTree();
 	//this->outputTree(this->root);
-	NFA nfa = NFA::MSE(this->root);
-	nfa.outputNFA();
+	this->nfa = NFA::MSE(this->root);
+	this->nfa.outputNFA();
 }
 
 RegExp::~RegExp()
 {
 	if(root) deleteTree(root);
+	NFA::delNFA(this->nfa.start);
 }
 
 void RegExp::initRegDef(string* defs, int size)

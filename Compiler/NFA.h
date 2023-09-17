@@ -18,5 +18,6 @@ public:
 	ANode* end; // 结束节点
 	static NFA MSE(RNode *now); // 由正则表达式的语法分析树构建自动机
 	void outputNFA();
+	static void delNFA(ANode *delStart);
 };
 

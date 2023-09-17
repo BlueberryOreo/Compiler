@@ -15,6 +15,7 @@ class RegExp
 private:
 	map<string, string> regDef;
 	RNode* root;
+	NFA nfa;
 
 	string singleword = "+-(){};,:|";
 	string doubleword = "><=!/*";

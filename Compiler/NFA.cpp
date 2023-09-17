@@ -113,3 +113,20 @@ void NFA::outputNFA()
 		}
 	}
 }
+
+// 删除时有问题：两个指针指向同一个节点时，第一个先删了之后，第二个会出现野指针问题
+void NFA::delNFA(ANode* delStart)
+{
+	queue<ANode*> q;
+	q.push(delStart);
+	while (!q.empty()) {
+		ANode* now = q.front();
+		q.pop();
+		if (!now) continue;
+		for (int i = 0; i < now->edges.size(); i ++) {
+			q.push(now->edges[i].to);
+		}
+		delete now;
+		now = NULL;
+	}
+}
