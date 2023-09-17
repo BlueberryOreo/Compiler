@@ -128,12 +128,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="io.h" />
+    <ClInclude Include="NFA.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="RegExp.h" />
     <ClInclude Include="TESTscan.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="io.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NFA.cpp" />
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="RegExp.cpp" />
     <ClCompile Include="TESTscan.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

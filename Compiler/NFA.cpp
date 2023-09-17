@@ -1,0 +1,103 @@
+#include "NFA.h"
+
+int NFA::id = 0;
+
+int NFA::getId()
+{
+	return id++;
+}
+
+NFA NFA::meta(RNode* node)
+{
+	NFA nfa{};
+	nfa.start = new ANode(getId());
+	nfa.end = new ANode(getId());
+	nfa.start->append(node->data, nfa.end);
+	return nfa;
+}
+
+NFA NFA::Concatenation(NFA &nfa1, NFA &nfa2)
+{
+	NFA ret{};
+	nfa1.end = nfa2.start;
+	ret.start = nfa1.start;
+	ret.end = nfa2.end;
+	return ret;
+}
+
+NFA NFA::Union(NFA& nfa1, NFA& nfa2)
+{
+	NFA ret{};
+	ret.start = new ANode(getId());
+	ret.end = new ANode(getId());
+	ret.start->append(E, nfa1.start);
+	ret.start->append(E, nfa2.start);
+	nfa1.end->append(E, ret.end);
+	nfa2.end->append(E, ret.end);
+	return ret;
+}
+
+NFA NFA::Kleene(NFA& nfa)
+{
+	NFA ret{};
+	ret.start = new ANode(getId());
+	ret.end = new ANode(getId());
+	ret.start->append(E, nfa.start);
+	nfa.end->append(E, nfa.start);
+	ret.start->append(E, ret.end);
+	nfa.end->append(E, ret.end);
+	return ret;
+}
+
+NFA NFA::MSE(RNode* now)
+{
+	if (now->children.size() == 0) {
+		if (now->data == "|" || now->data == "*" || now->data == "(" || now->data == ")") return NFA();
+		return meta(now);
+	}
+	int childNum = now->children.size();
+	vector<NFA> nfas;
+	char type = 'c';
+	for (int i = 0; i < childNum; i ++) {
+		RNode* child = now->children[i];
+		if (child->data == "|") {
+			type = 'u';
+			continue;
+		}
+		else if (child->data == "*") {
+			type = 'k';
+			continue;
+		}
+		else if (child->data == "(" || child->data == ")") continue;
+		nfas.push_back(MSE(child));
+	}
+
+	if (nfas.size() == 1 && type != 'k') return nfas[0];
+
+	if (type == 'c') {
+		cout << type << " " << nfas.size() << endl;
+		return Concatenation(nfas[0], nfas[1]);
+	}
+	else if (type == 'u') {
+		cout << type << " " << nfas.size() << endl;
+		return Union(nfas[0], nfas[1]);
+	}
+	else {
+		cout << type << " " << nfas.size() << endl;
+		return Kleene(nfas[0]);
+	}
+}
+
+void NFA::outputNFA()
+{
+	queue<ANode*> q;
+	q.push(start);
+	map<int, int> visited;
+	while (!q.empty()) {
+		ANode* now = q.front();
+		q.pop();
+		for (int i = 0; i < now->edges.size(); i ++) {
+			ANode* next = now->edges[i].to;
+		}
+	}
+}
