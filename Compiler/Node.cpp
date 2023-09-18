@@ -72,6 +72,16 @@ void DState::closure()
 	}
 }
 
+void DState::move(string inputS, DState &nextState)
+{
+	for (s_Aiterator it = this->NStates.begin(); it != this->NStates.end(); it ++) {
+		for (int i = 0; i < (*it)->edges.size(); i ++) {
+			AEdge tmp = (*it)->edges[i];
+			if (tmp.data == inputS) nextState.append(tmp.to);
+		}
+	}
+}
+
 bool DScmp::operator()(const ANode* node1, const ANode* node2) const
 {
 	if (node1->id == node2->id) return false;

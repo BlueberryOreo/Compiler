@@ -4,7 +4,27 @@
 #include <set>
 #include <stack>
 
+#ifndef m_iterator
+#define m_iterator map<string, string>::iterator
+#endif // !m_iterator
+
+#ifndef s_Riterator
+#define s_Riterator set<RNode*>::iterator
+#endif // !s_iterator
+
+#ifndef s_Aiterator
+#define s_Aiterator set<ANode*>::iterator
+#endif // !s_Aiterator
+
+
+#ifndef s_Siterator
+#define s_Siterator set<string>::iterator
+#endif // !s_Siterator
+
+#ifndef E
 #define E "epsilon"
+#endif // !E
+
 using namespace std;
 
 class ANode;
@@ -54,11 +74,13 @@ struct DScmp {
 
 // 确定自动机状态节点
 class DState : public Node {
+private:
+	set<ANode*, DScmp> NStates; // 按ANode的id去重
 public:
 	char state;
 	DState(char state);
-	set<ANode*, DScmp> NStates; // 按ANode的id去重
 	bool have(ANode *node); // 查找该DFA状态内是否有NFA状态node
 	void append(ANode *node); // 在该DFA状态内加入NFA状态node
-	void closure(); // 计算闭包
+	void closure(); // 计算当前DFA状态的epsilon闭包
+	void move(string inputS, DState &nextState); // 通过当前的状态以及输入符号找到下一个状态
 };

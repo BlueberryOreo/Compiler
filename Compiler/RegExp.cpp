@@ -42,8 +42,14 @@ RegExp::RegExp(string *defs, int size)
 	//this->initRegDef(defs, size); 
 	this->readTree();
 	//this->outputTree(this->root);
-	this->nfa = NFA::MSE(this->root);
-	this->nfa.outputNFA();
+	set<string> input;
+	this->nfa = NFA::MSE(this->root, input);
+	for (s_Siterator it = input.begin(); it != input.end(); it++) {
+		cout << *it << " ";
+	}
+	cout << endl;
+	//this->nfa.outputNFA();
+	cout << this->nfa.size << endl;
 }
 
 RegExp::~RegExp()
@@ -60,7 +66,7 @@ void RegExp::readTree()
 	while (cin >> f >> c) {
 		RNode* father = new RNode(f);
 		RNode* child = new RNode(c);
-		s_iterator tmp = nodes.find(father);
+		s_Riterator tmp = nodes.find(father);
 		if (tmp != nodes.end()) {
 			delete father;
 			father = *tmp;
@@ -74,7 +80,7 @@ void RegExp::readTree()
 		father->children.push_back(child);
 		child->father = father;
 	}
-	for (s_iterator it = nodes.begin(); it != nodes.end(); it ++) {
+	for (s_Riterator it = nodes.begin(); it != nodes.end(); it ++) {
 		if ((*it)->father == NULL) {
 			this->root = *it;
 			break;

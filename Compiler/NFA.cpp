@@ -9,7 +9,7 @@ int NFA::getId()
 
 NFA NFA::meta(RNode* node)
 {
-	NFA nfa{};
+	NFA nfa(2);
 	nfa.start = new ANode(getId());
 	nfa.end = new ANode(getId());
 	nfa.start->append(node->data, nfa.end);
@@ -18,7 +18,7 @@ NFA NFA::meta(RNode* node)
 
 NFA NFA::Concatenation(NFA &nfa1, NFA &nfa2)
 {
-	NFA ret{};
+	NFA ret;
 	for (int i = 0; i < nfa2.start->edges.size(); i ++) {
 		// 将nfa2.start的所有边接到nfa1.end上
 		nfa1.end->edges.push_back(nfa2.start->edges[i]);
@@ -27,39 +27,50 @@ NFA NFA::Concatenation(NFA &nfa1, NFA &nfa2)
 	delete nfa2.start;
 	ret.start = nfa1.start;
 	ret.end = nfa2.end;
+	ret.size = nfa1.size + nfa2.size - 1;
 	return ret;
 }
 
 NFA NFA::Union(NFA& nfa1, NFA& nfa2)
 {
-	NFA ret{};
+	NFA ret(2);
 	ret.start = new ANode(getId());
 	ret.end = new ANode(getId());
 	ret.start->append(E, nfa1.start);
 	ret.start->append(E, nfa2.start);
 	nfa1.end->append(E, ret.end);
 	nfa2.end->append(E, ret.end);
+	ret.size += nfa1.size + nfa2.size;
 	return ret;
 }
 
 NFA NFA::Kleene(NFA& nfa)
 {
-	NFA ret{};
+	NFA ret(2);
 	ret.start = new ANode(getId());
 	ret.end = new ANode(getId());
 	ret.start->append(E, nfa.start);
 	nfa.end->append(E, nfa.start);
 	ret.start->append(E, ret.end);
 	nfa.end->append(E, ret.end);
+	ret.size += nfa.size;
 	return ret;
 }
 
-NFA NFA::MSE(RNode* now)
+NFA::NFA(int size, ANode* start, ANode* end)
+{
+	this->size = size;
+	this->start = start;
+	this->end = end;
+}
+
+NFA NFA::MSE(RNode* now, set<string> &input)
 {
 	if (now->children.size() == 0) {
 		// 是终结符，直接构造自动机
 		if (now->data == "|" || now->data == "*" || now->data == "(" || now->data == ")") return NFA();
 		cout << "meta" << " " << now->data << endl;
+		input.insert(now->data);
 		return meta(now);
 	}
 	int childNum = now->children.size();
@@ -76,7 +87,7 @@ NFA NFA::MSE(RNode* now)
 			continue;
 		}
 		else if (child->data == "(" || child->data == ")") continue; // 是括号，略过
-		nfas.push_back(MSE(child));
+		nfas.push_back(MSE(child, input));
 	}
 
 	if (nfas.size() == 1 && type != 'k') return nfas[0];

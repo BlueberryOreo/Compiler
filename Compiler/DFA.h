@@ -11,6 +11,6 @@ private:
 	static char state;
 	static char getState();
 public:
-	DFA(NFA &nfa);
+	DFA(NFA &nfa, set<string> &input);
 };
 

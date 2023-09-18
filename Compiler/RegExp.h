@@ -2,8 +2,7 @@
 #include "util.h"
 #include "Node.h"
 #include "NFA.h"
-#define m_iterator map<string, string>::iterator
-#define s_iterator set<RNode*>::iterator
+
 using namespace std;
 
 struct cmp {

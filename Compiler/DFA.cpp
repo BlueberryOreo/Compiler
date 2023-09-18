@@ -12,7 +12,7 @@ char DFA::getState()
 	return state++;
 }
 
-DFA::DFA(NFA& nfa)
+DFA::DFA(NFA& nfa, set<string> &input)
 {
 	createDFA(nfa);
 }
