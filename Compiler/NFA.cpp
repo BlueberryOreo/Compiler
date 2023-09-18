@@ -114,19 +114,26 @@ void NFA::outputNFA()
 	}
 }
 
-// 删除时有问题：两个指针指向同一个节点时，第一个先删了之后，第二个会出现野指针问题
 void NFA::delNFA(ANode* delStart)
 {
+	stack<ANode*> stk; // 用于删除的栈
 	queue<ANode*> q;
 	q.push(delStart);
 	while (!q.empty()) {
 		ANode* now = q.front();
 		q.pop();
-		if (!now) continue;
+		if (now->id < 0) continue;
+		now->id = -1;
 		for (int i = 0; i < now->edges.size(); i ++) {
-			q.push(now->edges[i].to);
+			ANode* next = now->edges[i].to;
+			if (next->id < 0) continue;
+			q.push(next);
 		}
-		delete now;
-		now = NULL;
+		stk.push(now);
+	}
+	while (stk.size() > 0) {
+		ANode* top = stk.top();
+		stk.pop();
+		delete top;
 	}
 }

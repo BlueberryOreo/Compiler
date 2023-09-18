@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <queue>
+#include <stack>
 #include <string>
 #include <initializer_list>
 using namespace std;
