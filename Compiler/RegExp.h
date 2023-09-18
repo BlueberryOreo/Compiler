@@ -13,18 +13,10 @@ struct cmp {
 class RegExp
 {
 private:
-	map<string, string> regDef;
 	RNode* root;
 	NFA nfa;
 
-	string singleword = "+-(){};,:|";
-	string doubleword = "><=!/*";
-	bool testWord(char c);
-	vector<string> regLexer(string &s); // 正则表达式/定义式分词器
-
-	void insertRegDef(string def);
 	void deleteTree(RNode *now);
-	string join(vector<string> &strs);
 	RNode* searchNode(string s, RNode* now);
 
 	void outputTree(RNode *now);
@@ -32,8 +24,6 @@ private:
 public:
 	RegExp(string *defs = NULL, int size = 0);
 	~RegExp();
-	void initRegDef(string *defs = NULL, int size = 0);
-	void createParseTree(string &regExp); // 构造语法分析树（移入-归约法）
 
 	void readTree(); // 读取一棵树，按照父-子一行一行读入
 };
