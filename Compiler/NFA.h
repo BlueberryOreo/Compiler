@@ -9,7 +9,7 @@ private:
 	static int id;
 	static int getId();
 
-	static NFA meta(RNode *node); // 有终结符构造
+	static NFA meta(RNode *node); // 由终结符构造
 	static NFA Concatenation(NFA &nfa1, NFA &nfa2); // 连接
 	static NFA Union(NFA &nfa1, NFA &nfa2); // 并
 	static NFA Kleene(NFA &nfa); // 闭包

@@ -99,13 +99,13 @@ void NFA::outputNFA()
 {
 	queue<ANode*> q;
 	q.push(start);
-	map<int, int> visited;
+	map<int, bool> visited;
 	while (!q.empty()) {
 		ANode* now = q.front();
 		q.pop();
 		if (visited[now->id]) continue;
 		visited[now->id] = 1;
-		cout << now->id << endl;
+		cout << now->id << " " << now->edges.size() << endl;
 		for (int i = 0; i < now->edges.size(); i ++) {
 			ANode* next = now->edges[i].to;
 			if (visited[next->id]) continue;

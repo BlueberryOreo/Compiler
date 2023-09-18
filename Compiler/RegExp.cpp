@@ -54,7 +54,7 @@ RegExp::~RegExp()
 
 void RegExp::readTree()
 {
-	cout << "请输入一棵树，按照父-子节点，一行一行输入，父节点和子节点之间用空格分开" << endl;
+	cout << "请输入一棵树，按照父-子节点，一行一行输入，父节点和子节点之间用空格分开。请从左往右输入" << endl;
 	set<RNode*, cmp> nodes;
 	string f, c;
 	while (cin >> f >> c) {
