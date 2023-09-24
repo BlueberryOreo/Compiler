@@ -64,7 +64,7 @@ NFA::NFA(int size, NNode* start, NNode* end)
 	this->end = end;
 }
 
-NFA NFA::MSE(RNode* now, set<string> &input)
+NFA NFA::MYT(RNode* now, set<string> &input)
 {
 	if (now->children.size() == 0) {
 		// 是终结符，直接构造自动机
@@ -87,7 +87,7 @@ NFA NFA::MSE(RNode* now, set<string> &input)
 			continue;
 		}
 		else if (child->data == "(" || child->data == ")") continue; // 是括号，略过
-		nfas.push_back(MSE(child, input));
+		nfas.push_back(MYT(child, input));
 	}
 
 	if (nfas.size() == 1 && type != 'k') return nfas[0];

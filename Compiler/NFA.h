@@ -18,7 +18,7 @@ public:
 	NNode* end; // 结束节点
 	int size;
 	NFA(int size=0, NNode* start=NULL, NNode* end=NULL);
-	static NFA MSE(RNode *now, set<string> &input); // 由正则表达式的语法分析树构建自动机
+	static NFA MYT(RNode *now, set<string> &input); // 由正则表达式的语法分析树构建自动机
 	void outputNFA();
 	static void delNFA(NNode*delStart);
 };
