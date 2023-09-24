@@ -12,8 +12,8 @@
 #define s_Riterator set<RNode*>::iterator
 #endif // !s_iterator
 
-#ifndef s_Aiterator
-#define s_Aiterator set<ANode*>::iterator
+#ifndef s_Niterator
+#define s_Niterator set<NNode*>::iterator
 #endif // !s_Aiterator
 
 
@@ -27,7 +27,7 @@
 
 using namespace std;
 
-class ANode;
+class NNode;
 
 // 边类
 class Edge {
@@ -52,35 +52,39 @@ public:
 	RNode(string s);
 };
 
-// 自动机边
-class AEdge : public Edge {
+// 不确定自动机边
+class NEdge : public Edge {
 public:
-	ANode* to;
-	AEdge(string data="", ANode* toA=NULL);
+	NNode* to;
+	NEdge(string data="", NNode* toA=NULL);
 };
 
-// 自动机节点
-class ANode : public Node {
+// 不确定自动机节点
+class NNode : public Node {
 public:
 	int id;
-	vector<AEdge> edges;
-	ANode(int id);
-	void append(string edgeData, ANode *node);
+	vector<NEdge> edges;
+	NNode(int id);
+	void append(string edgeData, NNode*node);
 };
 
-struct DScmp {
-	bool operator() (const ANode *node1, const ANode *node2) const;
+struct DNcmp {
+	bool operator() (const NNode*node1, const NNode*node2) const;
 };
 
 // 确定自动机状态节点
-class DState : public Node {
+class DNode : public Node {
 private:
-	set<ANode*, DScmp> NStates; // 按ANode的id去重
+	set<NNode*, DNcmp> NStates; // 按NNode的id去重
+	int getHash() const;
+
+	friend class DNhash;
 public:
-	char state;
-	DState(char state);
-	bool have(ANode *node); // 查找该DFA状态内是否有NFA状态node
-	void append(ANode *node); // 在该DFA状态内加入NFA状态node
+	int state;
+	DNode(int state);
+	bool have(NNode* node); // 查找该DFA状态内是否有NFA状态node
+	void append(NNode* node); // 在该DFA状态内加入NFA状态node
 	void closure(); // 计算当前DFA状态的epsilon闭包
-	void move(string inputS, DState &nextState); // 通过当前的状态以及输入符号找到下一个状态
+	void move(string inputS, DNode &nextState); // 通过当前的状态以及输入符号找到下一个状态
+	bool operator==(const DNode &other) const; // 判断两个DFA状态是否相同（根据其包含的NFA状态）
 };

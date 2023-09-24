@@ -14,12 +14,12 @@ private:
 	static NFA Union(NFA &nfa1, NFA &nfa2); // 并
 	static NFA Kleene(NFA &nfa); // 闭包
 public:
-	ANode* start; // 起始节点
-	ANode* end; // 结束节点
+	NNode* start; // 起始节点
+	NNode* end; // 结束节点
 	int size;
-	NFA(int size=0, ANode* start=NULL, ANode* end=NULL);
+	NFA(int size=0, NNode* start=NULL, NNode* end=NULL);
 	static NFA MSE(RNode *now, set<string> &input); // 由正则表达式的语法分析树构建自动机
 	void outputNFA();
-	static void delNFA(ANode *delStart);
+	static void delNFA(NNode*delStart);
 };
 

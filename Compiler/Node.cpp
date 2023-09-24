@@ -11,7 +11,7 @@ RNode::RNode(string s): Node(s)
 {
 }
 
-AEdge::AEdge(string data, ANode* toA): Edge(data) {
+NEdge::NEdge(string data, NNode* toA): Edge(data) {
 	this->to = toA;
 }
 
@@ -25,44 +25,53 @@ Edge::Edge(string s)
 	this->data = s;
 }
 
-ANode::ANode(int id)
+NNode::NNode(int id)
 {
 	this->id = id;
 }
 
-void ANode::append(string edgeData, ANode *node)
+void NNode::append(string edgeData, NNode* node)
 {
-	AEdge edge(edgeData, node);
+	NEdge edge(edgeData, node);
 	edges.push_back(edge);
 }
 
-DState::DState(char state)
+int DNode::getHash() const
+{
+	int value = 0;
+	for (s_Niterator it = this->NStates.begin(); it != this->NStates.end(); it++) {
+		value += (*it)->id;
+	}
+	return value;
+}
+
+DNode::DNode(int state)
 {
 	this->state = state;
 }
 
-bool DState::have(ANode* node)
+bool DNode::have(NNode* node)
 {
 	return NStates.find(node) != NStates.end();
 }
 
-void DState::append(ANode* node)
+void DNode::append(NNode* node)
 {
 	this->NStates.insert(node);
 }
 
-void DState::closure()
+void DNode::closure()
 {
-	stack<ANode*> stk;
-	for (set<ANode*>::iterator it = this->NStates.begin(); it != this->NStates.end(); it ++) {
+	stack<NNode*> stk;
+	for (set<NNode*>::iterator it = this->NStates.begin(); it != this->NStates.end(); it ++) {
 		stk.push(*it);
 	}
 	while (!stk.empty()) {
-		ANode* now = stk.top();
+		NNode* now = stk.top();
 		stk.pop();
 		for (int i = 0; i < now->edges.size(); i++) {
 			if (now->edges[i].data == E) {
-				ANode* to = now->edges[i].to;
+				NNode* to = now->edges[i].to;
 				if (!this->have(to)) {
 					this->append(to);
 					stk.push(to);
@@ -72,17 +81,27 @@ void DState::closure()
 	}
 }
 
-void DState::move(string inputS, DState &nextState)
+void DNode::move(string inputS, DNode& nextState)
 {
-	for (s_Aiterator it = this->NStates.begin(); it != this->NStates.end(); it ++) {
+	for (s_Niterator it = this->NStates.begin(); it != this->NStates.end(); it ++) {
 		for (int i = 0; i < (*it)->edges.size(); i ++) {
-			AEdge tmp = (*it)->edges[i];
+			NEdge tmp = (*it)->edges[i];
 			if (tmp.data == inputS) nextState.append(tmp.to);
 		}
 	}
 }
 
-bool DScmp::operator()(const ANode* node1, const ANode* node2) const
+bool DNode::operator==(const DNode& other) const
+{
+	for (s_Niterator it = this->NStates.begin(); it != this->NStates.end(); it ++) {
+		if (other.NStates.find(*it) == other.NStates.end()) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool DNcmp::operator()(const NNode* node1, const NNode* node2) const
 {
 	if (node1->id == node2->id) return false;
 	return node1->id < node2->id;

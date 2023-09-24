@@ -10,8 +10,8 @@ int NFA::getId()
 NFA NFA::meta(RNode* node)
 {
 	NFA nfa(2);
-	nfa.start = new ANode(getId());
-	nfa.end = new ANode(getId());
+	nfa.start = new NNode(getId());
+	nfa.end = new NNode(getId());
 	nfa.start->append(node->data, nfa.end);
 	return nfa;
 }
@@ -34,8 +34,8 @@ NFA NFA::Concatenation(NFA &nfa1, NFA &nfa2)
 NFA NFA::Union(NFA& nfa1, NFA& nfa2)
 {
 	NFA ret(2);
-	ret.start = new ANode(getId());
-	ret.end = new ANode(getId());
+	ret.start = new NNode(getId());
+	ret.end = new NNode(getId());
 	ret.start->append(E, nfa1.start);
 	ret.start->append(E, nfa2.start);
 	nfa1.end->append(E, ret.end);
@@ -47,8 +47,8 @@ NFA NFA::Union(NFA& nfa1, NFA& nfa2)
 NFA NFA::Kleene(NFA& nfa)
 {
 	NFA ret(2);
-	ret.start = new ANode(getId());
-	ret.end = new ANode(getId());
+	ret.start = new NNode(getId());
+	ret.end = new NNode(getId());
 	ret.start->append(E, nfa.start);
 	nfa.end->append(E, nfa.start);
 	ret.start->append(E, ret.end);
@@ -57,7 +57,7 @@ NFA NFA::Kleene(NFA& nfa)
 	return ret;
 }
 
-NFA::NFA(int size, ANode* start, ANode* end)
+NFA::NFA(int size, NNode* start, NNode* end)
 {
 	this->size = size;
 	this->start = start;
@@ -108,42 +108,42 @@ NFA NFA::MSE(RNode* now, set<string> &input)
 
 void NFA::outputNFA()
 {
-	queue<ANode*> q;
+	queue<NNode*> q;
 	q.push(start);
 	map<int, bool> visited;
 	while (!q.empty()) {
-		ANode* now = q.front();
+		NNode* now = q.front();
 		q.pop();
 		if (visited[now->id]) continue;
 		visited[now->id] = 1;
 		cout << now->id << " " << now->edges.size() << endl;
 		for (int i = 0; i < now->edges.size(); i ++) {
-			ANode* next = now->edges[i].to;
+			NNode* next = now->edges[i].to;
 			if (visited[next->id]) continue;
 			q.push(next);
 		}
 	}
 }
 
-void NFA::delNFA(ANode* delStart)
+void NFA::delNFA(NNode* delStart)
 {
-	stack<ANode*> stk; // 用于删除的栈
-	queue<ANode*> q;
+	stack<NNode*> stk; // 用于删除的栈
+	queue<NNode*> q;
 	q.push(delStart);
 	while (!q.empty()) {
-		ANode* now = q.front();
+		NNode* now = q.front();
 		q.pop();
 		if (now->id < 0) continue;
 		now->id = -1;
 		for (int i = 0; i < now->edges.size(); i ++) {
-			ANode* next = now->edges[i].to;
+			NNode* next = now->edges[i].to;
 			if (next->id < 0) continue;
 			q.push(next);
 		}
 		stk.push(now);
 	}
 	while (stk.size() > 0) {
-		ANode* top = stk.top();
+		NNode* top = stk.top();
 		stk.pop();
 		delete top;
 	}
