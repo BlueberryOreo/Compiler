@@ -81,10 +81,12 @@ private:
 	friend class DNhash;
 public:
 	int state;
+	DNode();
 	DNode(int state);
 	bool have(NNode* node); // 查找该DFA状态内是否有NFA状态node
 	void append(NNode* node); // 在该DFA状态内加入NFA状态node
 	void closure(); // 计算当前DFA状态的epsilon闭包
 	void move(string inputS, DNode &nextState); // 通过当前的状态以及输入符号找到下一个状态
 	bool operator==(const DNode &other) const; // 判断两个DFA状态是否相同（根据其包含的NFA状态）
+	int size();
 };

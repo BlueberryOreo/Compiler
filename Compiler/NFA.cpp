@@ -69,7 +69,7 @@ NFA NFA::MYT(RNode* now, set<string> &input)
 	if (now->children.size() == 0) {
 		// 是终结符，直接构造自动机
 		if (now->data == "|" || now->data == "*" || now->data == "(" || now->data == ")") return NFA();
-		cout << "meta" << " " << now->data << endl;
+		//cout << "meta" << " " << now->data << endl;
 		input.insert(now->data);
 		return meta(now);
 	}
@@ -93,15 +93,15 @@ NFA NFA::MYT(RNode* now, set<string> &input)
 	if (nfas.size() == 1 && type != 'k') return nfas[0];
 
 	if (type == 'c') {
-		cout << type << " " << nfas.size() << endl;
+		//cout << type << " " << nfas.size() << endl;
 		return Concatenation(nfas[0], nfas[1]);
 	}
 	else if (type == 'u') {
-		cout << type << " " << nfas.size() << endl;
+		//cout << type << " " << nfas.size() << endl;
 		return Union(nfas[0], nfas[1]);
 	}
 	else {
-		cout << type << " " << nfas.size() << endl;
+		//cout << type << " " << nfas.size() << endl;
 		return Kleene(nfas[0]);
 	}
 }

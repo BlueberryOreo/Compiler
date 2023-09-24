@@ -40,16 +40,17 @@ RegExp::RegExp(string *defs, int size)
 {
 	this->root = NULL; 
 	//this->initRegDef(defs, size); 
-	this->readTree();
+	this->readTree(); // ¶ÁÈëÒ»¿ÃÊ÷
 	//this->outputTree(this->root);
-	set<string> input;
-	this->nfa = NFA::MSE(this->root, input);
+	set<string> input; // ´æ´¢ÊäÈë×Ö·û
+	this->nfa = NFA::MYT(this->root, input);
 	for (s_Siterator it = input.begin(); it != input.end(); it++) {
 		cout << *it << " ";
 	}
 	cout << endl;
 	//this->nfa.outputNFA();
 	cout << this->nfa.size << endl;
+	DFA dfa(nfa, input);
 }
 
 RegExp::~RegExp()

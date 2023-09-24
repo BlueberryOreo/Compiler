@@ -2,6 +2,7 @@
 #include "util.h"
 #include "Node.h"
 #include "NFA.h"
+#include "DFA.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ private:
 	void outputTree(RNode *now);
 	
 public:
-	RegExp(string *defs = NULL, int size = 0);
+	RegExp(string *defs = NULL, int size = 0); // 创建一个正则表达式
 	~RegExp();
 
 	void readTree(); // 读取一棵树，按照父-子一行一行读入

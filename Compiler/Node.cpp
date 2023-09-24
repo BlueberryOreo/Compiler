@@ -45,6 +45,11 @@ int DNode::getHash() const
 	return value;
 }
 
+DNode::DNode()
+{
+	this->state = 0;
+}
+
 DNode::DNode(int state)
 {
 	this->state = state;
@@ -99,6 +104,11 @@ bool DNode::operator==(const DNode& other) const
 		}
 	}
 	return true;
+}
+
+int DNode::size()
+{
+	return this->NStates.size();
 }
 
 bool DNcmp::operator()(const NNode* node1, const NNode* node2) const
