@@ -65,6 +65,11 @@ void DFA::outputDFA()
 	}
 }
 
+void DFA::simplify()
+{
+
+}
+
 bool DStates::haveUnsigned()
 {
 	return unsignedDNodes.size() > 0;

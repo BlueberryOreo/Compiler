@@ -57,3 +57,29 @@ r2 b
 r6 a
 r8 b
 */
+
+/*
+r8 r7
+r8 r11
+r7 r6
+r7 r10
+r6 r5
+r6 r9
+r5 r4
+r5 *
+r4 (
+r4 r3
+r4 )
+r3 r1
+r3 |
+r3 r2
+r1 a
+r2 b
+r9 a
+r10 b
+r11 b
+*/
+
+/*
+
+*/

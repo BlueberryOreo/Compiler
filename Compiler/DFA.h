@@ -11,6 +11,7 @@ public:
 	void setInput(set<string> &in);
 	DNode transition(DNode &now, string inputChar);
 	void addTransition(DNode &from, string inputChar, DNode &to);
+
 	typedef map<DNode, map<string, DNode> >::iterator iterrow;
 	typedef vector<string>::iterator itercol;
 	map<DNode, map<string, DNode> >::iterator rowBegin();
@@ -45,4 +46,5 @@ private:
 public:
 	DFA(NFA &nfa, set<string> &input);
 	void outputDFA(); // Êä³ö×ª»»±í
+	void simplify();
 };
