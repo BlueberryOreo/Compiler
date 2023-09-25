@@ -77,6 +77,7 @@ class DNode : public Node {
 private:
 	set<NNode*, DNcmp> NStates; // 按NNode的id去重
 	int getHash() const;
+	bool _empty; // 表示这个类是否是一个空的无意义的节点
 
 	friend class DNhash;
 public:
@@ -86,7 +87,16 @@ public:
 	bool have(NNode* node); // 查找该DFA状态内是否有NFA状态node
 	void append(NNode* node); // 在该DFA状态内加入NFA状态node
 	void closure(); // 计算当前DFA状态的epsilon闭包
-	void move(string inputS, DNode &nextState); // 通过当前的状态以及输入符号找到下一个状态
-	bool operator==(const DNode &other) const; // 判断两个DFA状态是否相同（根据其包含的NFA状态）
+	void move(string inputS, DNode& nextState); // 通过当前的状态以及输入符号找到下一个状态
+	//bool operator==(const DNode& other) const; // 判断两个DFA状态是否相同（根据其包含的NFA状态）
+	bool operator<(const DNode& other) const;
 	int size();
+	bool empty();
+
+	struct Hash {
+		size_t operator()(const DNode& node) const;
+	};
+	struct Equal {
+		bool operator()(const DNode &n1, const DNode &n2) const;
+	};
 };

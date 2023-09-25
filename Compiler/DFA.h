@@ -5,30 +5,33 @@
 
 class DTran {
 private:
-	map<string, int> input;
+	vector<string> input;
 	map<DNode, map<string, DNode> > table;
 public:
 	void setInput(set<string> &in);
 	DNode transition(DNode &now, string inputChar);
 	void addTransition(DNode &from, string inputChar, DNode &to);
-};
-
-class DNhash {
-public:
-	size_t operator()(const DNode& node) const;
+	typedef map<DNode, map<string, DNode> >::iterator iterrow;
+	typedef vector<string>::iterator itercol;
+	map<DNode, map<string, DNode> >::iterator rowBegin();
+	map<DNode, map<string, DNode> >::iterator rowEnd();
+	vector<string>::iterator inputBegin();
+	vector<string>::iterator inputEnd();
 };
 
 // 存储标记和未标记的有限自动机状态
 class DStates {
 private:
-	unordered_set<DNode, DNhash> signedDNodes;
-	unordered_set<DNode, DNhash> unsignedDNodes;
+	unordered_set<DNode, DNode::Hash, DNode::Equal> signedDNodes;
+	unordered_set<DNode, DNode::Hash, DNode::Equal> unsignedDNodes;
 public:
+	typedef unordered_set<DNode>::iterator iterator;
 	bool haveUnsigned();
 	DNode getUnsigned();
 	void addUnsigned(DNode node);
 	void addSigned(DNode node);
-	bool have(DNode &node);
+	DNode get(DNode &node);
+	//void outputUnsigned();
 };
 
 // 确定有限自动机
@@ -41,4 +44,5 @@ private:
 	static int getState();
 public:
 	DFA(NFA &nfa, set<string> &input);
+	void outputDFA(); // 输出转换表
 };

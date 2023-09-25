@@ -42,17 +42,19 @@ int DNode::getHash() const
 	for (s_Niterator it = this->NStates.begin(); it != this->NStates.end(); it++) {
 		value += (*it)->id;
 	}
-	return value;
+	return hash<int>()(value);
 }
 
 DNode::DNode()
 {
 	this->state = 0;
+	this->_empty = true;
 }
 
 DNode::DNode(int state)
 {
 	this->state = state;
+	this->_empty = false;
 }
 
 bool DNode::have(NNode* node)
@@ -96,14 +98,19 @@ void DNode::move(string inputS, DNode& nextState)
 	}
 }
 
-bool DNode::operator==(const DNode& other) const
+//bool DNode::operator==(const DNode& other) const
+//{
+//	//for (s_Niterator it = this->NStates.begin(); it != this->NStates.end(); it ++) {
+//	//	if (other.NStates.find(*it) == other.NStates.end()) {
+//	//		return false;
+//	//	}
+//	//}
+//	return getHash() == other.getHash();
+//}
+
+bool DNode::operator<(const DNode& other) const
 {
-	for (s_Niterator it = this->NStates.begin(); it != this->NStates.end(); it ++) {
-		if (other.NStates.find(*it) == other.NStates.end()) {
-			return false;
-		}
-	}
-	return true;
+	return this->state < other.state;
 }
 
 int DNode::size()
@@ -111,8 +118,23 @@ int DNode::size()
 	return this->NStates.size();
 }
 
+bool DNode::empty()
+{
+	return this->_empty;
+}
+
 bool DNcmp::operator()(const NNode* node1, const NNode* node2) const
 {
 	if (node1->id == node2->id) return false;
 	return node1->id < node2->id;
+}
+
+size_t DNode::Hash::operator()(const DNode& node) const
+{
+	return node.getHash();
+}
+
+bool DNode::Equal::operator()(const DNode& n1, const DNode& n2) const
+{
+	return n1.getHash() == n2.getHash();
 }

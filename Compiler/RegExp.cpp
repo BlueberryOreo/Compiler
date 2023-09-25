@@ -51,6 +51,7 @@ RegExp::RegExp(string *defs, int size)
 	//this->nfa.outputNFA();
 	cout << this->nfa.size << endl;
 	DFA dfa(nfa, input);
+	dfa.outputDFA();
 }
 
 RegExp::~RegExp()
