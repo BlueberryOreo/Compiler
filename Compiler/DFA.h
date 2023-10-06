@@ -7,7 +7,7 @@ class DTran {
 private:
 	vector<string> input;
 	map<DNode, map<string, DNode> > table;
-	map<int, int> stateMapper; // 存储简化前后各状态的映射情况，其中简化前各状态的映射等于自己
+	map<int, int> stateMapper; // 存储简化前后各状态的映射情况，其中简化前各状态的映射等于自己（并查集）
 	void merge(int a, int b);
 	int father(int x); // 维护stateMapper
 public:
@@ -15,7 +15,7 @@ public:
 	DNode transition(DNode &now, string inputChar);
 	void addTransition(DNode &from, string inputChar, DNode &to);
 	bool testEqual(map<string, DNode> &t1, map<string, DNode> &t2); // 判断转换到的状态是否相同
-	void simplify();
+	void simplify(); // 最简化
 	void output();
 
 	typedef map<DNode, map<string, DNode> >::iterator iterrow;

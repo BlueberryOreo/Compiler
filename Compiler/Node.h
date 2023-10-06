@@ -80,7 +80,6 @@ private:
 	int getHash() const;
 	bool _empty; // 表示这个类是否是一个空的无意义的节点
 
-	friend class DNhash;
 public:
 	bool isEnd; // 是否是接受状态
 	//int indegree; // 入度
@@ -94,7 +93,7 @@ public:
 	void move(string inputS, DNode& nextState); // 通过当前的状态以及输入符号找到下一个状态
 	//bool operator==(const DNode& other) const; // 判断两个DFA状态是否相同（根据其包含的NFA状态）
 	bool operator<(const DNode& other) const;
-	int size();
+	int size(); // 一个DFA中包含的NFA节点个数
 	bool empty();
 
 	struct Hash {
