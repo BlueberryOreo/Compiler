@@ -64,6 +64,7 @@ class NNode : public Node {
 public:
 	int id;
 	vector<NEdge> edges;
+	bool isEnd; // 是否是接受状态
 	NNode(int id);
 	void append(string edgeData, NNode*node);
 };
@@ -81,6 +82,9 @@ private:
 
 	friend class DNhash;
 public:
+	bool isEnd; // 是否是接受状态
+	//int indegree; // 入度
+
 	int state;
 	DNode();
 	DNode(int state);

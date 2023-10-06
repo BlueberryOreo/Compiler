@@ -4,12 +4,14 @@ int DFA::state = 0;
 
 void DFA::createDFA(NFA& nfa, set<string> &input)
 {
+	transTable.setInput(input);
 	DStates ds;
 	DNode start(getState());
 	start.append(nfa.start);
 	start.closure();
-	cout << "epsilon-closure(s0).size()=" << start.size() << endl;
+	//cout << "epsilon-closure(s0).size()=" << start.size() << endl;
 	ds.addUnsigned(start);
+	this->_start = start;
 	while (ds.haveUnsigned()) {
 		DNode now = ds.getUnsigned();
 		ds.addSigned(now);
@@ -40,34 +42,34 @@ int DFA::getState()
 	return state++;
 }
 
+DFA::DFA()
+{
+}
+
 DFA::DFA(NFA& nfa, set<string> &input)
 {
 	//cout << "here DFA:26" << endl;
-	transTable.setInput(input);
 	createDFA(nfa, input);
 }
 
 void DFA::outputDFA()
 {
-	// 表头
-	cout << '\t';
-	for (DTran::itercol it = transTable.inputBegin(); it != transTable.inputEnd(); it ++) {
-		cout << *it << '\t';
-	}
-	cout << endl;
-
-	for (DTran::iterrow row = transTable.rowBegin(); row != transTable.rowEnd(); row ++) {
-		cout << row->first.state << '\t';
-		for (DTran::itercol col = transTable.inputBegin(); col != transTable.inputEnd(); col ++) {
-			cout << row->second[*col].state << '\t';
-		}
-		cout << endl;
-	}
+	transTable.output();
 }
 
 void DFA::simplify()
 {
+	transTable.simplify();
+}
 
+DNode DFA::move(DNode& now, string input)
+{
+	return this->transTable.transition(now, input);
+}
+
+DNode DFA::getStart()
+{
+	return this->_start;
 }
 
 bool DStates::haveUnsigned()
@@ -113,6 +115,19 @@ DNode DStates::get(DNode& node)
 //	cout << endl;
 //}
 
+void DTran::merge(int a, int b)
+{
+	stateMapper[a] = father(b);
+}
+
+int DTran::father(int x)
+{
+	if (stateMapper[x] == x) return x;
+	int tmpF = father(stateMapper[x]);
+	stateMapper[x] = tmpF;
+	return tmpF;
+}
+
 void DTran::setInput(set<string>& in)
 {
 	for (s_Siterator it = in.begin(); it != in.end(); it ++) {
@@ -122,13 +137,77 @@ void DTran::setInput(set<string>& in)
 
 DNode DTran::transition(DNode& now, string inputChar)
 {
+	iterrow row = table.find(now);
+	if (row->second.find(inputChar) == row->second.end()) {
+		return DNode();
+	}
 	return table.find(now)->second.find(inputChar)->second;
 	//return NULL;
 }
 
 void DTran::addTransition(DNode& from, string inputChar, DNode& to)
 {
+	//to.indegree++;
 	table[from][inputChar] = to;
+	stateMapper[from.state] = from.state;
+	stateMapper[to.state] = to.state;
+}
+
+bool DTran::testEqual(map<string, DNode>& t1, map<string, DNode>& t2)
+{
+	for (itercol it = input.begin(); it != input.end(); it ++) {
+		if (father(t1[*it].state) != father(t2[*it].state)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void DTran::simplify()
+{
+	for (int i = 0; i < table.size(); i++) {
+		bool flag = true;
+		for (iterrow it = rowBegin(); it != rowEnd(); it ++) {
+			if (stateMapper[it->first.state] != it->first.state) continue; // 已经合并过
+			int baseState = it->first.state;
+			for (iterrow innerIt = rowBegin(); innerIt != rowEnd(); innerIt ++) {
+				if (innerIt->first.state == baseState) continue;
+				if (testEqual(it->second, innerIt->second) && (it->first.isEnd == innerIt->first.isEnd)) {
+					// 二者的转换相同并且同时属于结束状态或非结束状态
+					flag = false;
+					merge(innerIt->first.state, baseState);
+				}
+			}
+		}
+		if (flag) break;
+	}
+}
+
+void DTran::output()
+{
+	// 表头
+	cout << string(27, '=') << endl;
+	cout << setw(5) << "state";
+	cout << setw(10) << "receive";
+	cout << setw(12) << "move\n" << setw(15) << "";
+	for (itercol it = inputBegin(); it != inputEnd(); it++) {
+		cout << setw(6) << *it;
+	}
+	cout << endl;
+	cout << string(27, '-') << endl;
+
+	for (iterrow row = rowBegin(); row != rowEnd(); row++) {
+		int fa = father(row->first.state);
+		if (fa != row->first.state) continue;
+		cout << setw(5) << row->first.state
+			<< setw(10) << (row->first.isEnd ? "yes" : "no");
+		for (itercol col = inputBegin(); col != inputEnd(); col++) {
+			cout << setw(6) << father(row->second[*col].state);
+		}
+
+		cout << endl;
+	}
+	cout << string(27, '=') << endl;
 }
 
 map<DNode, map<string, DNode>>::iterator DTran::rowBegin()

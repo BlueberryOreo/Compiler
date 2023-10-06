@@ -15,6 +15,7 @@ class RegExp
 private:
 	RNode* root;
 	NFA nfa;
+	DFA dfa;
 
 	void deleteTree(RNode *now);
 	RNode* searchNode(string s, RNode* now);
@@ -26,5 +27,6 @@ public:
 	~RegExp();
 
 	void readTree(); // 读取一棵树，按照父-子一行一行读入
+	string match(string &pattern);
 };
 

@@ -44,13 +44,16 @@ RegExp::RegExp(string *defs, int size)
 	//this->outputTree(this->root);
 	set<string> input; // ´æ´¢ÊäÈë×Ö·û
 	this->nfa = NFA::MYT(this->root, input);
+	this->nfa.end->isEnd = true;
 	for (s_Siterator it = input.begin(); it != input.end(); it++) {
 		cout << *it << " ";
 	}
 	cout << endl;
 	//this->nfa.outputNFA();
 	cout << this->nfa.size << endl;
-	DFA dfa(nfa, input);
+	//DFA dfa(nfa, input);
+	dfa.createDFA(nfa, input);
+	dfa.simplify();
 	dfa.outputDFA();
 }
 
@@ -88,6 +91,29 @@ void RegExp::readTree()
 			break;
 		}
 	}
+}
+
+string RegExp::match(string& pattern)
+{
+	DNode now = this->dfa.getStart();
+	bool matched = false;
+	int i;
+	for (i = 0; i < pattern.size(); i ++) {
+		DNode next = this->dfa.move(now, string(1, pattern[i]));
+		if (next.empty()) {
+			throw "Unexpected input char: " + pattern[i];
+		}
+		else if(next.isEnd){
+			matched = true;
+			break;
+		}
+		else {
+			now = next;
+		}
+	}
+	if (!matched) return "";
+	string ret = "";
+	return ret;
 }
 
 bool cmp::operator()(const RNode* a, const RNode* b) const

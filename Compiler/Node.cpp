@@ -28,6 +28,7 @@ Edge::Edge(string s)
 NNode::NNode(int id)
 {
 	this->id = id;
+	this->isEnd = false;
 }
 
 void NNode::append(string edgeData, NNode* node)
@@ -49,12 +50,16 @@ DNode::DNode()
 {
 	this->state = 0;
 	this->_empty = true;
+	this->isEnd = false;
+	//this->indegree = 0;
 }
 
 DNode::DNode(int state)
 {
 	this->state = state;
 	this->_empty = false;
+	this->isEnd = false;
+	//this->indegree = 0;
 }
 
 bool DNode::have(NNode* node)
@@ -76,6 +81,7 @@ void DNode::closure()
 	while (!stk.empty()) {
 		NNode* now = stk.top();
 		stk.pop();
+		this->isEnd |= now->isEnd;
 		for (int i = 0; i < now->edges.size(); i++) {
 			if (now->edges[i].data == E) {
 				NNode* to = now->edges[i].to;
