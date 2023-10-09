@@ -53,6 +53,8 @@ RegExp::RegExp(string *defs, int size)
 	cout << this->nfa.size << endl;
 	//DFA dfa(nfa, input);
 	dfa.createDFA(nfa, input);
+	//cout << dfa.size() << endl;
+	//dfa.outputDFA();
 	dfa.simplify();
 	dfa.outputDFA();
 }

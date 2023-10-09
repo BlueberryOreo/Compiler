@@ -9,7 +9,7 @@ void DFA::createDFA(NFA& nfa, set<string> &input)
 	DNode start(getState());
 	start.append(nfa.start);
 	start.closure();
-	//cout << "epsilon-closure(s0).size()=" << start.size() << endl;
+	cout << "epsilon-closure(s0).size()=" << start.size() << endl;
 	ds.addUnsigned(start);
 	this->_start = start;
 	while (ds.haveUnsigned()) {
@@ -43,7 +43,7 @@ int DFA::getState()
 }
 
 DFA::DFA()
-{
+{ // 无参构造函数
 }
 
 DFA::DFA(NFA& nfa, set<string> &input)
@@ -60,6 +60,11 @@ void DFA::outputDFA()
 void DFA::simplify()
 {
 	transTable.simplify();
+}
+
+int DFA::size()
+{
+	return transTable.size();
 }
 
 DNode DFA::move(DNode& now, string input)
@@ -137,11 +142,11 @@ void DTran::setInput(set<string>& in)
 
 DNode DTran::transition(DNode& now, string inputChar)
 {
-	iterrow row = table.find(now);
+	iterrow row = table.find(states[father(now.state)]);
 	if (row->second.find(inputChar) == row->second.end()) {
 		return DNode();
 	}
-	return table.find(now)->second.find(inputChar)->second;
+	return states[father(table.find(now)->second.find(inputChar)->second.state)];
 	//return NULL;
 }
 
@@ -151,6 +156,9 @@ void DTran::addTransition(DNode& from, string inputChar, DNode& to)
 	table[from][inputChar] = to;
 	stateMapper[from.state] = from.state;
 	stateMapper[to.state] = to.state;
+	states[from.state] = from;
+	states[to.state] = to;
+
 }
 
 bool DTran::testEqual(map<string, DNode>& t1, map<string, DNode>& t2)
@@ -168,12 +176,12 @@ void DTran::simplify()
 	for (int i = 0; i < table.size(); i++) {
 		bool flag = true;
 		for (iterrow it = rowBegin(); it != rowEnd(); it ++) {
-			if (stateMapper[it->first.state] != it->first.state) continue; // 已经合并过
+			//if (stateMapper[it->first.state] != it->first.state) continue; // 已经合并过
 			int baseState = it->first.state;
 			for (iterrow innerIt = rowBegin(); innerIt != rowEnd(); innerIt ++) {
 				if (innerIt->first.state == baseState) continue;
 				if (testEqual(it->second, innerIt->second) && (it->first.isEnd == innerIt->first.isEnd)) {
-					// 二者的转换相同并且同时属于结束状态或非结束状态
+					// 二者的转换相同
 					flag = false;
 					merge(innerIt->first.state, baseState);
 				}
@@ -228,4 +236,9 @@ vector<string>::iterator DTran::inputBegin()
 vector<string>::iterator DTran::inputEnd()
 {
 	return input.end();
+}
+
+int DTran::size()
+{
+	return table.size();
 }

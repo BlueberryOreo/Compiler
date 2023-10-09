@@ -8,7 +8,7 @@ RNode::RNode(string s, initializer_list<RNode*> args): Node(s)
 }
 
 RNode::RNode(string s): Node(s)
-{
+{ // 无参构造函数
 }
 
 NEdge::NEdge(string data, NNode* toA): Edge(data) {
