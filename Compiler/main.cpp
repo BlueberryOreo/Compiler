@@ -16,8 +16,15 @@ int main() {
 	cout << "请输入输出文件位置:" << endl;
 	cin >> outputPath;
 #endif
-
+	 
 	RegExp reg;
+	string test = "01101";
+	if (reg.match(test)) {
+		cout << test << " 被接受" << endl;
+	}
+	else {
+		cout << test << " 不被接受" << endl;
+	}
 	
 	//int err = TESTscan(inputPath, outputPath);
 	//if (!err) {

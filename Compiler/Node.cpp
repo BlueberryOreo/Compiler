@@ -1,15 +1,16 @@
 #include "Node.h"
 
-RNode::RNode(string s, initializer_list<RNode*> args): Node(s)
+RNode::RNode(string s, RNode* father/*, initializer_list<RNode*> args*/): Node(s)
 {
-	for (RNode* item : args) {
-		this->children.push_back(item);
-	}
+	this->father = father;
+	//for (RNode* item : args) {
+	//	this->children.push_back(item);
+	//}
 }
 
-RNode::RNode(string s): Node(s)
-{ // 无参构造函数
-}
+//RNode::RNode(string s): Node(s)
+//{ // 无参构造函数
+//}
 
 NEdge::NEdge(string data, NNode* toA): Edge(data) {
 	this->to = toA;

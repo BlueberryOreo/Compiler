@@ -25,23 +25,76 @@ RNode* RegExp::searchNode(string s, RNode *now)
 	return ret;
 }
 
+void RegExp::constructTree(const string& postReg)
+{
+	//cout << postReg << endl;
+	int cntR = 0;
+	for (int i = 0; i < postReg.size(); i++) {
+		//cout << "r" << i << " " << postReg[i] << endl;
+		if (postReg[i] == '|') {
+			root->children.push_back(new RNode("|", root));
+			swap(root->children[1], root->children[2]);
+		}
+		else {
+			if (root) {
+				RNode* newRoot = new RNode("r" + to_string(cntR++));
+				newRoot->children.push_back(root);
+				root->father = newRoot;
+				root = newRoot;
+			}
+			
+			if (postReg[i] == '*') {
+				root->children.push_back(new RNode("*", root));
+			}
+			else if (postReg[i] == '.') {
+				if (i + 1 >= postReg.size()) break;
+				RNode* tmp = new RNode("r" + to_string(cntR++), root);
+				tmp->children.push_back(new RNode(string(1, postReg[i + 1]), tmp));
+				root->children.push_back(tmp);
+				i++;
+			}
+			else {
+				RNode* tmp = new RNode("r" + to_string(cntR++));
+				tmp->children.push_back(new RNode(string(1, postReg[i]), tmp));
+				if (root) {
+					root->children.push_back(tmp);
+				}
+				else {
+					swap(root, tmp);
+					delete tmp;
+				}
+			}
+		}
+
+		//cout << root->data << " -> ";
+		//for (auto c : root->children) cout << c->data << " ";
+		//cout << endl;
+	}
+}
+
 void RegExp::outputTree(RNode* now)
 {
 	if (now == NULL) return;
-	cout << now->data << " ";
+	//cout << now->data << " ";
 	//cout << now->data << " " << now->children.size() << endl;
 	for (int i = 0; i < now->children.size(); i ++) {
 		RNode* child = now->children[i];
+		cout << now->data << " " << child->data << endl;
 		outputTree(child);
 	}
 }
 
-RegExp::RegExp(string *defs, int size)
+RegExp::RegExp()
 {
+	//cout << infixToPostfix("(a|b)*abb") << endl;
 	this->root = NULL; 
 	//this->initRegDef(defs, size); 
 	this->readTree(); // ¶ÁÈëÒ»¿ÃÊ÷
+	//this->constructTree(infixToPostfix(reg));
+	//return;
 	//this->outputTree(this->root);
+	//cout << endl;
+	//return;
 	set<string> input; // ´æ´¢ÊäÈë×Ö·û
 	this->nfa = NFA::MYT(this->root, input);
 	this->nfa.end->isEnd = true;
@@ -95,7 +148,7 @@ void RegExp::readTree()
 	}
 }
 
-string RegExp::match(string& pattern)
+bool RegExp::match(const string& pattern)
 {
 	DNode now = this->dfa.getStart();
 	bool matched = false;
@@ -103,19 +156,18 @@ string RegExp::match(string& pattern)
 	for (i = 0; i < pattern.size(); i ++) {
 		DNode next = this->dfa.move(now, string(1, pattern[i]));
 		if (next.empty()) {
-			throw "Unexpected input char: " + pattern[i];
+			//throw "Unexpected input char: " + pattern[i];
+			return false;
 		}
-		else if(next.isEnd){
-			matched = true;
-			break;
-		}
+		//else if(next.isEnd){
+		//	matched = true;
+		//}
 		else {
 			now = next;
 		}
 	}
-	if (!matched) return "";
-	string ret = "";
-	return ret;
+	if (!now.isEnd) return false;
+	return true;
 }
 
 bool cmp::operator()(const RNode* a, const RNode* b) const

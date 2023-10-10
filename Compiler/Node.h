@@ -22,7 +22,7 @@
 #endif // !s_Siterator
 
 #ifndef E
-#define E "epsilon"
+#define E "."
 #endif // !E
 
 using namespace std;
@@ -46,10 +46,10 @@ public:
 // 正则表达式语法分析树节点
 class RNode : public Node {
 public:
-	RNode* father = NULL;
+	RNode* father;
 	vector<RNode*> children;
-	RNode(string s, initializer_list<RNode*> args);
-	RNode(string s);
+	RNode(string s, RNode* father=NULL/*, initializer_list<RNode*> args*/);
+	//RNode(string s);
 };
 
 // 不确定自动机边

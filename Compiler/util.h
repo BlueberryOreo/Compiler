@@ -18,3 +18,5 @@ using namespace std;
 #define WORDERROR 2
 
 #define KEYWORDNUM 8
+
+string infixToPostfix(const string& regex);

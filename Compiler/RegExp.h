@@ -19,14 +19,15 @@ private:
 
 	void deleteTree(RNode *now);
 	RNode* searchNode(string s, RNode* now);
+	void constructTree(const string &reg);
 
 	void outputTree(RNode *now);
 	
 public:
-	RegExp(string *defs = NULL, int size = 0); // 创建一个正则表达式
+	RegExp(); // 创建一个正则表达式
 	~RegExp();
 
 	void readTree(); // 读取一棵树，按照父-子一行一行读入
-	string match(string &pattern);
+	bool match(const string &pattern);
 };
 
