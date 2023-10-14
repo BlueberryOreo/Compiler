@@ -15,6 +15,7 @@ TESTscan2::TESTscan2()
 	if (!comp_single) throw "comp_single.tree not found";
 	//if (!comment) throw "comment.tree not found";
 
+	// 构建各自动机
 	regId = new RegExp("ID");
 	regNum = new RegExp("NUM");
 	regSingle = new RegExp("SINGLE");
@@ -107,24 +108,6 @@ int TESTscan2::scan(string& input_file, string& output_file)
 			}
 		}
 		else if (state == 4) {
-			//bool isSingle = false;
-			//for (int i = 0; i < singleword.size(); i ++) {
-			//	if (singleword[i] == now) {
-			//		isSingle = true;
-			//		break;
-			//	}
-			//}
-			//if (isSingle) outputSingleWord(now);
-			//else {
-			//	bool isDouble = false;
-			//	for (int i = 0; i < doubleword.size(); i ++) {
-			//		if (doubleword[i] == now) {
-			//			isDouble = true;
-			//			break;
-			//		}
-			//	}
-
-			//}
 			if (regSingle->matchNext(now)) outputSingleWord(now);
 			else if (regDouble->matchNext(now)) {
 				string dw(1, now);
@@ -148,6 +131,7 @@ int TESTscan2::scan(string& input_file, string& output_file)
 		}
 		now = next;
 	}
+	if (state != 0) return 1;
 	ofstream ofs;
 	ofs.open(output_file.c_str());
 	if (!ofs) return 1;

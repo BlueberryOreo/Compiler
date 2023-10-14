@@ -9,10 +9,10 @@ private:
 	string keyword[KEYWORDNUM] = { "if", "int", "else", "for", "while", "write", "do", "read" };
 	//string singleword = "+-(){};,:*";
 	//string doubleword = "><=!";
-	RegExp *regNum;
-	RegExp *regId;
-	RegExp *regSingle;
-	RegExp *regDouble;
+	RegExp *regNum; // 数字自动机
+	RegExp *regId; // 标识符自动机
+	RegExp *regSingle; // 单分界符自动机
+	RegExp *regDouble; // 双分界符自动机
 	//RegExp *regCom;
 
 public:
