@@ -22,7 +22,7 @@
 #endif // !s_Siterator
 
 #ifndef E
-#define E "."
+#define E "\0"
 #endif // !E
 
 using namespace std;

@@ -70,6 +70,9 @@ NFA NFA::MYT(RNode* now, set<string> &input)
 		// 是终结符，直接构造自动机
 		if (now->data == "|" || now->data == "*" || now->data == "(" || now->data == ")") return NFA();
 		//cout << "meta" << " " << now->data << endl;
+		if (now->data[0] == '\\') {
+			if (now->data[1] != 'w' && now->data[1] != 'd') now->data = string(1, now->data[1]);
+		}
 		input.insert(now->data);
 		return meta(now);
 	}

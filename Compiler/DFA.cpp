@@ -160,6 +160,9 @@ DNode DTran::transition(DNode& now, string inputChar)
 	else if (row->second.find(asterisk) != row->second.end()) {
 		return states[father(table.find(now)->second.find(asterisk)->second.state)];
 	}
+	else if (row->second.find(".") != row->second.end()) {
+		return states[father(table.find(now)->second.find(".")->second.state)];
+	}
 	else return DNode();
 	
 	//return NULL;

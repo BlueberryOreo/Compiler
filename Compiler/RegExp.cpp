@@ -79,7 +79,7 @@ void RegExp::outputTree(RNode* now)
 	//cout << now->data << " " << now->children.size() << endl;
 	for (int i = 0; i < now->children.size(); i ++) {
 		RNode* child = now->children[i];
-		cout << now->data << " " << child->data << endl;
+		//cout << now->data << " " << child->data << endl;
 		outputTree(child);
 	}
 }
@@ -107,7 +107,7 @@ void RegExp::init()
 	//else {
 	//	this->readTree(); // ¶ÁÈëÒ»¿ÃÊ÷
 	//}
-	//this->constructTree(infixToPostfix(reg));
+	//this->constructTree(infixToPostfix("+|-|*|(|)|{|}|:|,|;"));
 	//return;
 	//this->outputTree(this->root);
 	//cout << endl;
@@ -218,11 +218,11 @@ bool RegExp::matchNext(char c)
 {
 	if (pointer.empty()) pointer = dfa.getStart();
 	pointer = dfa.move(pointer, string(1, c));
+	if (pointer.empty() || dfa.isDead(pointer)) return false;
 	if (pointer.isEnd) {
 		pointer = dfa.getStart();
 		return true;
 	}
-	if (pointer.empty()) throw "Unexpted inpu char: " + c;
 	return false;
 }
 
