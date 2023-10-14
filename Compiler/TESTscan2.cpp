@@ -64,6 +64,7 @@ int TESTscan2::scan(string& input_file, string& output_file)
 				now = next;
 				continue;
 			}
+			// 分配自动机
 			if ('0' <= now && now <= '9') state = 1;
 			else if (('a' <= now && now <= 'z') || ('A' <= now && now <= 'Z')) state = 2;
 			else if (now == '/') state = 3;
