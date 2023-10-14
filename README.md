@@ -18,3 +18,5 @@
 * `DFA.cpp` DFA类
 * `Node.h`
 * `Node.cpp` 点（状态）类
+* `TESTscan2.h`
+* `TESTscan2.cpp` 基于自动机的词法分析器
