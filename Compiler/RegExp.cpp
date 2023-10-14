@@ -115,16 +115,16 @@ void RegExp::init()
 	set<string> input; // ´æ´¢ÊäÈë×Ö·û
 	this->nfa = NFA::MYT(this->root, input);
 	this->nfa.end->isEnd = true;
-	for (s_Siterator it = input.begin(); it != input.end(); it++) {
-		cout << *it << " ";
-	}
-	cout << endl;
-	//this->nfa.outputNFA();
-	cout << this->nfa.size << endl;
+	//for (s_Siterator it = input.begin(); it != input.end(); it++) {
+	//	cout << *it << " ";
+	//}
+	//cout << endl;
+	////this->nfa.outputNFA();
+	//cout << this->nfa.size << endl;
 	//DFA dfa(nfa, input);
 	dfa.createDFA(nfa, input);
 	//cout << dfa.size() << endl;
-	dfa.outputDFA();
+	//dfa.outputDFA();
 	dfa.simplify();
 	dfa.outputDFA();
 }

@@ -201,7 +201,7 @@ bool DTran::isDead(DNode& node)
 void DTran::simplify()
 {
 	for (int i = 0; i < table.size(); i++) {
-		cout << i << endl;
+		//cout << i << endl;
 		bool flag = true;
 		for (iterrow it = rowBegin(); it != rowEnd(); it ++) {
 			//if (stateMapper[it->first.state] != it->first.state) continue; // 已经合并过
