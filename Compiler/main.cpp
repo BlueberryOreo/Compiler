@@ -18,29 +18,29 @@ int main() {
 	cin >> outputPath;
 #endif
 	 
-	RegExp reg;
-	//ifstream com;
-	//com.open("./comment.tree");
-	//reg.readFromFile(com);
-	//com.close();
-	reg.readTree();
-	reg.init();
-	string test = "aaabbb";
-	if (reg.match(test)) {
-		cout << test << " 被接受" << endl;
-	}
-	else {
-		cout << test << " 不被接受" << endl;
-	}
-	
-	//TESTscan2 lexer;
-	//int err = lexer.scan(inputPath, outputPath);
-	//if (!err) {
-	//	cout << "词法分析成功" << endl;
+	//RegExp reg;
+	////ifstream com;
+	////com.open("./comment.tree");
+	////reg.readFromFile(com);
+	////com.close();
+	//reg.readTree();
+	//reg.init();
+	//string test = "aaabbb";
+	//if (reg.match(test)) {
+	//	cout << test << " 被接受" << endl;
 	//}
 	//else {
-	//	cout << "出现错误，停止编译" << endl;
+	//	cout << test << " 不被接受" << endl;
 	//}
+	
+	TESTscan2 lexer;
+	int err = lexer.scan(inputPath, outputPath);
+	if (!err) {
+		cout << "词法分析成功" << endl;
+	}
+	else {
+		cout << "出现错误，停止编译" << endl;
+	}
 
 	return 0;
 }
