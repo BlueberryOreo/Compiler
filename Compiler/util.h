@@ -19,4 +19,4 @@ using namespace std;
 
 #define KEYWORDNUM 8
 
-string infixToPostfix(const string& regex);
+string infixToPostfix(const string& regex); // ÒÑÆúÓÃ

@@ -22,7 +22,7 @@ private:
 
 	void deleteTree(RNode *now);
 	RNode* searchNode(string s, RNode* now);
-	void constructTree(const string &reg);
+	void constructTree(const string &reg); // ÒÑÆúÓÃ
 
 	void outputTree(RNode *now);
 	
