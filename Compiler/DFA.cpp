@@ -1,6 +1,6 @@
 #include "DFA.h"
 
-int DFA::state = 0;
+int DFA::state = 1;
 
 void DFA::createDFA(NFA& nfa, set<string> &input)
 {
@@ -9,18 +9,20 @@ void DFA::createDFA(NFA& nfa, set<string> &input)
 	DNode start(getState());
 	start.append(nfa.start);
 	start.closure();
-	cout << "epsilon-closure(s0).size()=" << start.size() << endl;
+	//cout << "epsilon-closure(s0).size()=" << start.size() << endl;
 	ds.addUnsigned(start);
 	this->_start = start;
 	while (ds.haveUnsigned()) {
 		DNode now = ds.getUnsigned();
 		ds.addSigned(now);
-		//cout << now.state << " " << now.getHash() << endl;
+		//cout << "now.size() = " << now.size() << " now.state = " << now.state << " " << now.getHash() << endl;
 		for (s_Siterator it = input.begin(); it != input.end(); it ++) {
 			DNode next(getState());
 			now.move(*it, next);
 			next.closure();
+			//cout << "next size = " << next.size() << " next.hash() = " << next.getHash() << endl;
 			DNode res = ds.get(next);
+			//cout << "res size = " << res.size() << endl;
 			if (res.empty()) {
 				//cout << "doesn't find DNode " << next.state << " hash=" << next.getHash() << ": ";
 				//for (s_Niterator it = next.NStates.begin(); it != next.NStates.end(); it ++) {
@@ -62,6 +64,11 @@ void DFA::simplify()
 	transTable.simplify();
 }
 
+bool DFA::isDead(DNode& node)
+{
+	return transTable.isDead(node);
+}
+
 int DFA::size()
 {
 	return transTable.size();
@@ -101,6 +108,7 @@ void DStates::addSigned(DNode node)
 
 DNode DStates::get(DNode& node)
 {
+	//cout << "node.size() = " << node.size() << " signed.size() = " << signedDNodes.size() << " unsigned.size() = " << unsignedDNodes.size() << endl;
 	iterator signedGet = signedDNodes.find(node);
 	iterator unsignedGet = unsignedDNodes.find(node);
 	if (signedGet != signedDNodes.end()) {
@@ -143,10 +151,17 @@ void DTran::setInput(set<string>& in)
 DNode DTran::transition(DNode& now, string inputChar)
 {
 	iterrow row = table.find(states[father(now.state)]);
-	if (row->second.find(inputChar) == row->second.end()) {
-		return DNode();
+	string asterisk;
+	if (('a' <= inputChar[0] && inputChar[0] <= 'z') || ('A' <= inputChar[0] && inputChar[0] <= 'Z')) asterisk = "\\w";
+	if ('0' <= inputChar[0] && inputChar[0] <= '9') asterisk = "\\d";
+	if (row->second.find(inputChar) != row->second.end()) {
+		return states[father(table.find(now)->second.find(inputChar)->second.state)];
 	}
-	return states[father(table.find(now)->second.find(inputChar)->second.state)];
+	else if (row->second.find(asterisk) != row->second.end()) {
+		return states[father(table.find(now)->second.find(asterisk)->second.state)];
+	}
+	else return DNode();
+	
 	//return NULL;
 }
 
@@ -171,9 +186,19 @@ bool DTran::testEqual(map<string, DNode>& t1, map<string, DNode>& t2)
 	return true;
 }
 
+bool DTran::isDead(DNode& node)
+{
+	iterrow it = table.find(node);
+	for (int i = 0; i < input.size(); i++) {
+		if (it->second[input[i]].state != node.state) return false;
+	}
+	return true;
+}
+
 void DTran::simplify()
 {
 	for (int i = 0; i < table.size(); i++) {
+		cout << i << endl;
 		bool flag = true;
 		for (iterrow it = rowBegin(); it != rowEnd(); it ++) {
 			//if (stateMapper[it->first.state] != it->first.state) continue; // 已经合并过

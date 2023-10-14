@@ -36,6 +36,9 @@
     <ClInclude Include="DFA.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TESTscan2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TESTscan.cpp">
@@ -60,6 +63,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TESTscan2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

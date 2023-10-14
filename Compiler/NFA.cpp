@@ -1,6 +1,6 @@
 #include "NFA.h"
 
-int NFA::id = 0;
+int NFA::id = 1;
 
 int NFA::getId()
 {
@@ -127,6 +127,7 @@ void NFA::outputNFA()
 
 void NFA::delNFA(NNode* delStart)
 {
+	if (!delStart) return;
 	stack<NNode*> stk; // ÓÃÓÚÉ¾³ıµÄÕ»
 	queue<NNode*> q;
 	q.push(delStart);

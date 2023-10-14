@@ -125,6 +125,12 @@ int DNode::size()
 	return this->NStates.size();
 }
 
+//bool DNode::isDead()
+//{
+//
+//	return false;
+//}
+
 bool DNode::empty()
 {
 	return this->_empty;

@@ -84,12 +84,29 @@ void RegExp::outputTree(RNode* now)
 	}
 }
 
-RegExp::RegExp()
+RegExp::RegExp(const string &name)
 {
 	//cout << infixToPostfix("(a|b)*abb") << endl;
+	this->name = name;
 	this->root = NULL; 
+}
+
+RegExp::~RegExp()
+{
+	if(root) deleteTree(root);
+	NFA::delNFA(this->nfa.start);
+}
+
+void RegExp::init()
+{
 	//this->initRegDef(defs, size); 
-	this->readTree(); // 读入一棵树
+	//if (file_path.size()) {
+	//	int res = this->readFromFile(file_path);
+	//	if (res) throw file_path + " not found";
+	//}
+	//else {
+	//	this->readTree(); // 读入一棵树
+	//}
 	//this->constructTree(infixToPostfix(reg));
 	//return;
 	//this->outputTree(this->root);
@@ -107,15 +124,9 @@ RegExp::RegExp()
 	//DFA dfa(nfa, input);
 	dfa.createDFA(nfa, input);
 	//cout << dfa.size() << endl;
-	//dfa.outputDFA();
+	dfa.outputDFA();
 	dfa.simplify();
 	dfa.outputDFA();
-}
-
-RegExp::~RegExp()
-{
-	if(root) deleteTree(root);
-	NFA::delNFA(this->nfa.start);
 }
 
 void RegExp::readTree()
@@ -148,6 +159,39 @@ void RegExp::readTree()
 	}
 }
 
+int RegExp::readFromFile(ifstream &ifs)
+{
+
+	set<RNode*, cmp> nodes;
+	string f, c;
+	while (ifs >> f >> c) {
+		RNode* father = new RNode(f);
+		RNode* child = new RNode(c);
+		s_Riterator tmp = nodes.find(father);
+		if (tmp != nodes.end()) {
+			delete father;
+			father = *tmp;
+		}
+		else {
+			nodes.insert(father);
+		}
+		if (nodes.find(child) == nodes.end()) {
+			nodes.insert(child);
+		}
+		father->children.push_back(child);
+		child->father = father;
+	}
+	for (s_Riterator it = nodes.begin(); it != nodes.end(); it++) {
+		if ((*it)->father == NULL) {
+			this->root = *it;
+			break;
+		}
+	}
+
+	ifs.close();
+	return 0;
+}
+
 bool RegExp::match(const string& pattern)
 {
 	DNode now = this->dfa.getStart();
@@ -155,7 +199,7 @@ bool RegExp::match(const string& pattern)
 	int i;
 	for (i = 0; i < pattern.size(); i ++) {
 		DNode next = this->dfa.move(now, string(1, pattern[i]));
-		if (next.empty()) {
+		if (next.empty() || dfa.isDead(next)) {
 			//throw "Unexpected input char: " + pattern[i];
 			return false;
 		}
@@ -168,6 +212,28 @@ bool RegExp::match(const string& pattern)
 	}
 	if (!now.isEnd) return false;
 	return true;
+}
+
+bool RegExp::matchNext(char c)
+{
+	if (pointer.empty()) pointer = dfa.getStart();
+	pointer = dfa.move(pointer, string(1, c));
+	if (pointer.isEnd) {
+		pointer = dfa.getStart();
+		return true;
+	}
+	if (pointer.empty()) throw "Unexpted inpu char: " + c;
+	return false;
+}
+
+string RegExp::getName()
+{
+	return this->name;
+}
+
+void RegExp::setName(const string &name)
+{
+	this->name = name;
 }
 
 bool cmp::operator()(const RNode* a, const RNode* b) const

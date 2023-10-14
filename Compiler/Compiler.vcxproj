@@ -133,6 +133,7 @@
     <ClInclude Include="Node.h" />
     <ClInclude Include="RegExp.h" />
     <ClInclude Include="TESTscan.h" />
+    <ClInclude Include="TESTscan2.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +144,7 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="RegExp.cpp" />
     <ClCompile Include="TESTscan.cpp" />
+    <ClCompile Include="TESTscan2.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

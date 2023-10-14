@@ -48,6 +48,11 @@ void output(ofstream& ofs)
 	ofs << scanOut;
 }
 
+void output()
+{
+	cout << scanOut << endl;
+}
+
 // ´íÎó´¦Àí
 void error(int type, ifstream* ifs, int shift, string info) {
 	if (type == WORDERROR) {

@@ -16,6 +16,7 @@ public:
 	DNode transition(DNode &now, string inputChar);
 	void addTransition(DNode &from, string inputChar, DNode &to);
 	bool testEqual(map<string, DNode> &t1, map<string, DNode> &t2); // 判断转换到的状态是否相同
+	bool isDead(DNode &node);
 	void simplify(); // 最简化
 	void output();
 
@@ -59,6 +60,7 @@ public:
 	void createDFA(NFA& nfa, set<string>& input);
 	void outputDFA(); // 输出转换表
 	void simplify();
+	bool isDead(DNode &node);
 	int size();
 	DNode move(DNode &now, string input);
 	DNode getStart();

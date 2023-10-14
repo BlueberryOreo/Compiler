@@ -1,8 +1,9 @@
 #include "TESTscan.h"
+#include "TESTscan2.h"
 #include "RegExp.h"
 
-#define INPUTPATH "E:\\Progress\\Compiler\\school\\test.T"
-#define OUTPUTPATH "E:\\Progress\\Compiler\\school\\out.T"
+#define INPUTPATH "E:\\Progress\\Compiler\\test.T"
+#define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
 
 int main() {
 	
@@ -18,7 +19,9 @@ int main() {
 #endif
 	 
 	RegExp reg;
-	string test = "01101";
+	reg.readTree();
+	reg.init();
+	string test = "int";
 	if (reg.match(test)) {
 		cout << test << " 被接受" << endl;
 	}
@@ -26,7 +29,8 @@ int main() {
 		cout << test << " 不被接受" << endl;
 	}
 	
-	//int err = TESTscan(inputPath, outputPath);
+	//TESTscan2 lexer;
+	//int err = lexer.scan(inputPath, outputPath);
 	//if (!err) {
 	//	cout << "词法分析成功" << endl;
 	//}

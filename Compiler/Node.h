@@ -75,7 +75,7 @@ struct DNcmp {
 
 // 确定自动机状态节点
 class DNode : public Node {
-private:
+public:
 	set<NNode*, DNcmp> NStates; // 按NNode的id去重
 	int getHash() const;
 	bool _empty; // 表示这个类是否是一个空的无意义的节点
@@ -94,6 +94,8 @@ public:
 	//bool operator==(const DNode& other) const; // 判断两个DFA状态是否相同（根据其包含的NFA状态）
 	bool operator<(const DNode& other) const;
 	int size(); // 一个DFA中包含的NFA节点个数
+	//void setEmpty(bool e);
+	//bool isDead();
 	bool empty();
 
 	struct Hash {
