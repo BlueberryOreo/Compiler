@@ -1,5 +1,15 @@
 #include "TESTscan2.h"
 
+string TESTscan2::lower(string& s)
+{
+	string ret = "";
+	for (auto c : s) {
+		if ('A' <= c && c <= 'Z') ret.push_back(c + 32);
+		else ret.push_back(c);
+	}
+	return ret;
+}
+
 TESTscan2::TESTscan2()
 {
 	regId = regNum = NULL;
@@ -78,9 +88,15 @@ int TESTscan2::scan(string& input_file, string& output_file)
 			res[1] = regNum->matchNext(next);
 			tmp.push_back(now);
 			if (res[0] && !res[1]) {
-				outputNum(tmp);
-				tmp = "";
-				state = 0;
+				if (('a' <= next && next <= 'z') || ('A' <= next && next <= 'Z')) {
+					error(WORDERROR, &ifs, 1);
+					return 1;
+				}
+				else {
+					outputNum(tmp);
+					tmp = "";
+					state = 0;
+				}
 			}
 		}
 		else if (state == 2) {
@@ -90,7 +106,7 @@ int TESTscan2::scan(string& input_file, string& output_file)
 			if (res[0] && !res[1]) {
 				bool iskw = false;
 				for (int i = 0; i < KEYWORDNUM; i ++) {
-					if (tmp == keyword[i]) {
+					if (lower(tmp) == keyword[i]) {
 						iskw = true;
 						break;
 					}

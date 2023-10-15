@@ -14,6 +14,7 @@ private:
 	RegExp *regSingle; // 单分界符自动机
 	RegExp *regDouble; // 双分界符自动机
 	//RegExp *regCom;
+	string lower(string &s);
 
 public:
 	TESTscan2();
