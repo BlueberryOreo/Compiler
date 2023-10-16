@@ -1,5 +1,24 @@
 #include "LL.h"
 
+int program();
+int compoundStat();
+int statement();
+int expressionStat();
+int expression();
+int boolExpr();
+int additiveExpr();
+int term();
+int factor();
+int ifStat();
+int whileStat();
+int forStat();
+int writeStat();
+int readStat();
+int declarationStat();
+int declarationList();
+int statementList();
+int compoundList();
+
 //extern char token[20], token1[40];
 struct Token {
 	string first, second;
@@ -67,6 +86,7 @@ int compoundStat()
 		fp.seekg(tmpPos);
 		return -1;
 	}
+	int es = statementList();
 
 	return 0;
 }
@@ -104,6 +124,7 @@ int expression()
 	//}
 	//else es = boolExpr();
 	//return(es);
+	return 0;
 }
 
 int boolExpr()

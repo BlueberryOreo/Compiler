@@ -108,6 +108,7 @@ int TESTscan2::scan(string& input_file, string& output_file)
 				for (int i = 0; i < KEYWORDNUM; i ++) {
 					if (lower(tmp) == keyword[i]) {
 						iskw = true;
+						tmp = keyword[i];
 						break;
 					}
 				}
