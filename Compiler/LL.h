@@ -1,0 +1,21 @@
+#pragma once
+#include "util.h"
+int TESTparse(string &lexerOut);
+int program();
+int compoundStat();
+int statement();
+int expressionStat();
+int expression();
+int boolExpr();
+int additiveExpr();
+int term();
+int factor();
+int ifStat();
+int whileStat();
+int forStat();
+int writeStat();
+int readStat();
+int declarationStat();
+int declarationList();
+int statementList();
+int compoundList();

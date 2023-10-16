@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="DFA.h" />
     <ClInclude Include="io.h" />
+    <ClInclude Include="LL.h" />
     <ClInclude Include="NFA.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="RegExp.h" />
@@ -139,6 +140,7 @@
   <ItemGroup>
     <ClCompile Include="DFA.cpp" />
     <ClCompile Include="io.cpp" />
+    <ClCompile Include="LL.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NFA.cpp" />
     <ClCompile Include="Node.cpp" />

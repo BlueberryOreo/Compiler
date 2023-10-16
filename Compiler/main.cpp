@@ -1,4 +1,46 @@
+#include<stdio.h>
+#include<ctype.h>
 #include "TESTscan.h"
+#include "TESTscan2.h"
+#include "RegExp.h"
+#include "LL.h"
+
+#define INPUTPATH "E:\\Progress\\Compiler\\test.T"
+#define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
+
+//extern int TESTscan();
+TESTscan2 lexer;
+extern int TESTparse(string &lexerOut);
+//char Scanin[300], Scanout[300];
+//FILE* fin, * fout;
+void main() {
+
+	string inputPath, outputPath;
+#ifdef INPUTPATH
+	inputPath = INPUTPATH;
+	outputPath = OUTPUTPATH;
+#else
+	cout << "请输入输入文件位置:" << endl;
+	cin >> inputPath;
+	cout << "请输入输出文件位置:" << endl;
+	cin >> outputPath;
+#endif
+
+	int es = 0;
+	//es = TESTscan();
+	es = lexer.scan(inputPath, outputPath);
+	if (es > 0) printf("词法分析有错, 编译终止!\n");
+	else printf("词法分析成功!\n");
+	if (es == 0)
+	{
+		es = TESTparse(outputPath);
+		if (es > 0) printf("语法分析有错, 编译终止!\n");
+		else printf("语法分析成功!\n");
+	}
+}
+
+
+/*#include "TESTscan.h"
 #include "TESTscan2.h"
 #include "RegExp.h"
 
@@ -44,6 +86,7 @@ int main() {
 
 	return 0;
 }
+*/
 
 /*
 r : a
