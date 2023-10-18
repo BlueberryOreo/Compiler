@@ -10,10 +10,10 @@
 
 //extern int TESTscan();
 TESTscan2 lexer;
-extern int TESTparse(string &lexerOut);
+extern int TESTparse(string &source, string &lexerOut);
 //char Scanin[300], Scanout[300];
 //FILE* fin, * fout;
-void main() {
+int main() {
 
 	string inputPath, outputPath;
 #ifdef INPUTPATH
@@ -31,12 +31,14 @@ void main() {
 	es = lexer.scan(inputPath, outputPath);
 	if (es > 0) printf("词法分析有错, 编译终止!\n");
 	else printf("词法分析成功!\n");
+	//return 0;
 	if (es == 0)
 	{
-		es = TESTparse(outputPath);
+		es = TESTparse(inputPath, outputPath);
 		if (es > 0) printf("语法分析有错, 编译终止!\n");
 		else printf("语法分析成功!\n");
 	}
+	return 0;
 }
 
 

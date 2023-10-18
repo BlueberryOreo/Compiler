@@ -10,4 +10,4 @@ void outputDoubleWord(string& dw);
 void output(ofstream &ofs);
 void output();
 
-void error(int type, ifstream* ifs, int shift=0, string info="");
+void error(int type, ifstream* ifs, int shift=0, string info="", int inputLine=-1);

@@ -70,7 +70,7 @@ int TESTscan2::scan(string& input_file, string& output_file)
 		if (now == EOF) break;
 		next = getch(ifs);
 		if (!state) {
-			if (now == ' ' || now == '\n' || now == '\t') {
+			if (now <= 32) {
 				now = next;
 				continue;
 			}
