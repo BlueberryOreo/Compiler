@@ -31,6 +31,11 @@ ifstream& operator>>(ifstream &fin, Token &t) {
 	return fin;
 }
 
+ostream& operator<<(ostream &out, Token &t) {
+	out << t.first << " " << t.second;
+	return out;
+}
+
 //语法分析程序
 int TESTparse(string &lexerOut) {
 	int es = 0;
@@ -46,9 +51,9 @@ int TESTparse(string &lexerOut) {
 	{
 	case 0: printf("语法分析成功\n"); break;
 	case 10: cout << "打开文件 " << lexerOut << " 失败" << endl;; break;
-	case 1: printf("\n"); break; // program大括号未闭合
+	case 1: printf("\n"); break; // 大括号未闭合
 	case 2: printf("\n"); break; // declarationError
-	case 3: printf("\n"); break;
+	case 3: printf("\n"); break; // 变量定义语句没有结尾
 	case 4: printf("\n"); break;
 	case 5: printf("\n"); break;
 	case 6: printf("\n"); break;
@@ -87,12 +92,20 @@ int compoundStat()
 		return -1;
 	}
 	int es = statementList();
-
+	if (es) return es;
+	fp >> t;
+	if (t.first != "}") return 1;
 	return 0;
 }
 
+//  <expression_stat> -> <expression>; | ;
 int expressionStat()
 {
+	int es = expression();
+	if (es > 0) return es;
+	Token t;
+	fp >> t;
+	if (t.first != ";") return 3;
 	return 0;
 }
 
@@ -100,32 +113,35 @@ int expressionStat()
 //<expr> -> ID=<bool _expr> | <bool_expr>
 int expression()
 {
-	//int es = 0, fileadd;
-	//char token2[20], token3[40];
-	//if (strcmp(token, "ID") == 0)
-	//{
-	//	fileadd = ftell(fp); //记住当前文件位置
-	//	fscanf(fp, "%s %s\n", &token2, &token3);
-	//	printf("%s %s \n", token2, token3);
-	//	if (strcmp(token2, "=") == 0) //赋值表达式
-	//	{
-	//		fscanf(fp, "%s %s\n", &token, &token1);
-	//		printf("%s %s\n", token, token1);
-	//		es = boolExpr();
-	//		if (es > 0)return(es);
-	//	}
-	//	else
-	//	{
-	//		fseek(fp, fileadd, 0); //若非=, 则文件指针回到=前的标识符
-	//		printf("%s $s\n", token, token1);
-	//		es = boolExpr();
-	//		if (es > 0) return(es);
-	//	}
-	//}
-	//else es = boolExpr();
-	//return(es);
-	return 0;
+	int es = 0;
+	Token t1;
+	fp >> t1;
+	if (t1.first == "ID"){
+		auto fileadd = fp.tellg(); //记住当前文件位置
+		Token t2;
+		fp >> t2;
+		cout << t2;
+		if (t2.first == "=") {//赋值表达式
+			fp >> t1;
+			//fscanf(fp, "%s %s\n", &token, &token1);
+			cout << t1 << endl;
+			//printf("%s %s\n", token, token1);
+			es = boolExpr();
+			if (es > 0)return es;
+		}
+		else {
+			//fseek(fp, fileadd, 0); //若非=, 则文件指针回到=前的标识符
+			fp.seekg(fileadd);
+			//printf("%s $s\n", token, token1);
+			cout << t1 << endl;
+			es = boolExpr();
+			if (es > 0) return es;
+		}
+	}
+	else es = boolExpr();
+	return es;
 }
+
 
 int boolExpr()
 {
