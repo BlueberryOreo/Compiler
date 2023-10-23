@@ -5,8 +5,8 @@
 #include "RegExp.h"
 #include "LL.h"
 
-#define INPUTPATH "E:\\Progress\\Compiler\\test.T"
-#define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
+#define INPUTPATH "E:\\Progress\\Compiler\\school\\test.T"
+#define OUTPUTPATH "E:\\Progress\\Compiler\\school\\out.T"
 
 //extern int TESTscan();
 TESTscan2 lexer;

@@ -254,6 +254,7 @@ int factor()
 		if (es > 0) return es;
 		getToken(t);
 		if (t.first != ")") return 1;
+		else return 0;
 	}
 	else if (t.first == "ID") return 0;
 	else if (t.first == "NUM") return 0;
@@ -342,8 +343,14 @@ int writeStat()
 		return -1;
 	}
 	int es = expression();
+#ifdef DEBUG_LL
+	cout << "346 es=" << es << endl;
+#endif
 	if (es > 0) return es;
 	getToken(t);
+#ifdef DEBUG_LL
+	cout << "351 token=" << t << endl;
+#endif
 	if (t.first != ";") return 3;
 	return 0;
 }
