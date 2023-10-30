@@ -21,6 +21,7 @@ using namespace std;
 
 #define KEYWORDNUM 8
 
-#define DEBUG_LL
+#define nDEBUG_LL
+#define OUTPUT_TREE
 
 string infixToPostfix(const string& regex); // ÒÑÆúÓÃ

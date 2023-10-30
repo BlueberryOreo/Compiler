@@ -27,6 +27,7 @@ struct Token {
 //extern char Scanout[300];
 ifstream fp;
 int currentPos, currentLine;
+int tab = 0;
 
 ifstream& operator>>(ifstream &fin, Token &t) {
 	fin >> t.first >> t.second >> t.pos >> t.line;
@@ -42,7 +43,7 @@ void getToken(Token &t) {
 	fp >> t;
 	currentPos = t.pos;
 	currentLine = t.line;
-	cout << currentPos << " " << currentLine << endl;
+	//cout << currentPos << " " << currentLine << endl;
 }
 
 //语法分析程序
@@ -86,6 +87,10 @@ int TESTparse(string &source, string &lexerOut) {
 //  <program> -> { <declaration_list><statement_list> }
 int program() 
 {
+#ifdef OUTPUT_TREE
+	cout << "<program>" << endl;
+	tab++;
+#endif
 	Token t;
 	getToken(t);
 	if (t.first == "{") {
@@ -166,13 +171,13 @@ int expression()
 			if (es > 0) return es;
 		}
 		else {
-			cout << "169here" << endl;
+			//cout << "169here" << endl;
 			//fseek(fp, fileadd, 0); //若非=, 则文件指针回到=前的标识符
 			fp.seekg(begin);
 			//printf("%s $s\n", token, token1);
 			//cout << t1 << endl;
 			es = boolExpr();
-			cout << "175 es=" << es << endl;
+			//cout << "175 es=" << es << endl;
 			if (es > 0) return es;
 		}
 	}
