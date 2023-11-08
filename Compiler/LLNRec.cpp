@@ -3,6 +3,7 @@
 void LLNRec::initGramma()
 {
 	begin = "E";
+	// 输入语法要求：一个产生式的右侧的每个元素用空格隔开
 	gramma["E"] = vector<string>{ "T E'" };
 	gramma["E'"] = vector<string>{ "+ T E'", E };
 	gramma["T"] = vector<string>{ "F T'" };
@@ -16,13 +17,14 @@ void LLNRec::initGramma()
 	}
 }
 
+// 递归构建FIRST集
 set<string> LLNRec::findFirst(string now)
 {
 	//cout << "now=" << now << endl;
 	if (gramma.find(now) == gramma.end()) {
 		return set<string>{now};
 	}
-	if (!first[now].empty()) return first[now];
+	if (!first[now].empty()) return first[now]; // 剪枝
 	for (string right : gramma[now]) {
 		//cout << "right=" << right << endl;
 		string tmpFirst = "";
@@ -44,6 +46,7 @@ void LLNRec::initFirst()
 	}
 }
 
+// 解析产生式右侧字符串
 vector<string> LLNRec::getRightItems(string& right)
 {
 	vector<string> rightItems;
@@ -72,7 +75,8 @@ void LLNRec::initFollow()
 			for (string right : it->second) {
 				vector<string> rightItems = getRightItems(right);
 				//cout << it->first << " rightItems=" << rightItems << endl; // here
-				set<string> tmpFirst = follow[it->first];
+				set<string> tmpFirst = follow[it->first]; // 连续空时FIRST的继承
+				// 反向遍历构造follow，以处理空
 				for (int i = rightItems.size() - 1; i >= 0; i--) {
 					if (gramma.find(rightItems[i]) == gramma.end()) {
 						inputSign.insert(rightItems[i]);
@@ -92,8 +96,9 @@ void LLNRec::initFollow()
 
 					if (follow[rightItems[i]].size() != lastLen) changed = true;
 
-					if (first[rightItems[i]].find(E) == first[rightItems[i]].end()) tmpFirst.clear();
+					if (first[rightItems[i]].find(E) == first[rightItems[i]].end()) tmpFirst.clear(); // 如果当前FIRST没有空，那么清除tmpFirst
 					else {
+						// 否则将当前的FIRST合并到tmpFirst中，以添加到下一个非终结符的FOLLOW中
 						set_union(first[rightItems[i]].begin(), first[rightItems[i]].end(), tmpFirst.begin(), tmpFirst.end(), inserter(tmpFirst, tmpFirst.begin()));
 						tmpFirst.erase(E);
 					}
@@ -104,6 +109,7 @@ void LLNRec::initFollow()
 	}
 }
 
+// 书算法4.31
 void LLNRec::buildTable()
 {
 	for (it_msv it = gramma.begin(); it != gramma.end(); it ++) {
