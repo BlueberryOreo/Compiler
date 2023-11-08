@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <map>
 #include <set>
 #include <unordered_set>
@@ -22,7 +23,7 @@ using namespace std;
 #define KEYWORDNUM 8
 
 #define nDEBUG_LL
-#define DEBUG_LLNRC
+#define nDEBUG_LLNRC
 
 // ´Ê·¨µ¥Ôª
 struct Token {

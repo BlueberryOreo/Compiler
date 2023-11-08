@@ -12,6 +12,7 @@ void LLNRec::initGramma()
 	for (map<string, vector<string> >::iterator it = gramma.begin(); it != gramma.end(); it++) {
 		first[it->first] = set<string>();
 		follow[it->first] = set<string>();
+		predictTable[it->first] = map<string, pair<string, vector<string> > >();
 	}
 }
 
@@ -43,30 +44,38 @@ void LLNRec::initFirst()
 	}
 }
 
+vector<string> LLNRec::getRightItems(string& right)
+{
+	vector<string> rightItems;
+	right.push_back(' ');
+	string tmpRight = "";
+	for (char c : right) {
+		if (c == ' ') {
+			rightItems.push_back(tmpRight);
+			tmpRight.clear();
+		}
+		else {
+			tmpRight.push_back(c);
+		}
+	}
+	return rightItems;
+}
+
 void LLNRec::initFollow()
 {
 	follow[begin].insert("$");
+	inputSign.insert("$");
 	while (true) {
 		bool changed = false;
 		for (it_msv it = gramma.begin(); it != gramma.end(); it++) {
 			//cout << it->first << "->" << it->second << endl;
 			for (string right : it->second) {
-				vector<string> rightItems;
-				right.push_back(' ');
-				string tmpRight = "";
-				for (char c : right) {
-					if (c == ' ') {
-						rightItems.push_back(tmpRight);
-						tmpRight.clear();
-					}
-					else {
-						tmpRight.push_back(c);
-					}
-				}
+				vector<string> rightItems = getRightItems(right);
 				//cout << it->first << " rightItems=" << rightItems << endl; // here
 				set<string> tmpFirst = follow[it->first];
 				for (int i = rightItems.size() - 1; i >= 0; i--) {
 					if (gramma.find(rightItems[i]) == gramma.end()) {
+						inputSign.insert(rightItems[i]);
 						tmpFirst.clear();
 						tmpFirst.insert(rightItems[i]);
 						continue;
@@ -95,12 +104,57 @@ void LLNRec::initFollow()
 	}
 }
 
+void LLNRec::buildTable()
+{
+	for (it_msv it = gramma.begin(); it != gramma.end(); it ++) {
+		for (auto right: it->second) {
+			vector<string> rightItems = getRightItems(right);
+			pair<string, vector<string> > p = { it->first, rightItems };
+			//cout << rightItems << endl;
+			if (gramma.find(rightItems[0]) == gramma.end()) predictTable[it->first][rightItems[0]] = p;
+
+			bool hasEps = (rightItems[0] == E);
+			for (auto terminal: first[rightItems[0]]) {
+				//cout << it->first << " " << terminal << " " << it->second << endl;
+				if (terminal == E) hasEps = true;
+				else predictTable[it->first][terminal] = p;
+			}
+			if (hasEps) {
+				for (auto terminal : follow[it->first]) predictTable[it->first][terminal] = p;
+			}
+		}
+	}
+}
+
+void LLNRec::showTable()
+{
+	cout << "Ô¤²â·ÖÎö±í" << endl;
+	vector<string> sign;
+	cout << setw(10) << "";
+	for (auto s: inputSign) {
+		sign.push_back(s);
+		cout << setw(14) << left << s;
+	}
+	cout << endl;
+	for (it_msv it = gramma.begin(); it != gramma.end(); it ++) {
+		cout << setw(10) << left << it->first;
+		for (auto s: sign) {
+			pair<string, vector<string> > p = predictTable[it->first][s];
+			stringstream ss;
+			if(p.first.size()) ss << p.first << "->" << p.second;
+			cout << setw(14) << left << ss.str();
+		}
+		cout << endl;
+	}
+}
+
 LLNRec::LLNRec(string &lexerOut) {
 	lexer.open(lexerOut.c_str());
 	if (!lexer) throw "Cannot open file " + lexerOut;
 	initGramma();
 	initFirst();
 	initFollow();
+	buildTable();
 #ifdef DEBUG_LLNRC
 	for (it_mss it = first.begin(); it != first.end(); it++) {
 		cout << "FIRST(" << it->first << ") = " << it->second << endl;
@@ -110,5 +164,5 @@ LLNRec::LLNRec(string &lexerOut) {
 		cout << "FOLLOW(" << it->first << ") = " << it->second << endl;
 	}
 #endif // DEBUG_LLNRC
-
+	showTable();
 }
