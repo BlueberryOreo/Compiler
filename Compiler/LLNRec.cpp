@@ -8,7 +8,7 @@ void LLNRec::initGramma()
 	gramma["E'"] = vector<string>{ "+ T E'", E };
 	gramma["T"] = vector<string>{ "F T'" };
 	gramma["T'"] = vector<string>{ "* F T'", E };
-	gramma["F"] = vector<string>{ "( E )", "ID" };
+	gramma["F"] = vector<string>{ "( E )", "id" };
 
 	for (map<string, vector<string> >::iterator it = gramma.begin(); it != gramma.end(); it++) {
 		first[it->first] = set<string>();
