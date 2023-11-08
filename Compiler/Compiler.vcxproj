@@ -130,6 +130,7 @@
     <ClInclude Include="DFA.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="LL.h" />
+    <ClInclude Include="LLNRec.h" />
     <ClInclude Include="NFA.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="RegExp.h" />
@@ -141,6 +142,7 @@
     <ClCompile Include="DFA.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="LL.cpp" />
+    <ClCompile Include="LLNRec.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NFA.cpp" />
     <ClCompile Include="Node.cpp" />

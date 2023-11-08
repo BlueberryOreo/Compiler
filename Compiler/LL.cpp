@@ -19,24 +19,9 @@ int declarationList();
 int statementList();
 int compoundList();
 
-//extern char token[20], token1[40];
-struct Token {
-	string first, second;
-	int pos, line;
-};
 //extern char Scanout[300];
 ifstream fp;
 int currentPos, currentLine;
-
-ifstream& operator>>(ifstream &fin, Token &t) {
-	fin >> t.first >> t.second >> t.pos >> t.line;
-	return fin;
-}
-
-ostream& operator<<(ostream &out, Token &t) {
-	out << "(" << t.first << ", " << t.second << ")";
-	return out;
-}
 
 void getToken(Token &t) {
 	fp >> t;

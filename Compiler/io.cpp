@@ -58,6 +58,30 @@ void output(ofstream& ofs)
 	ofs << scanOut;
 }
 
+ostream& operator<<(ostream& out, vector<string>& v) {
+	for (auto item : v) {
+		out << item << " ";
+	}
+	return out;
+}
+
+ifstream& operator>>(ifstream& fin, Token& t) {
+	fin >> t.first >> t.second >> t.pos >> t.line;
+	return fin;
+}
+
+ostream& operator<<(ostream& out, Token& t) {
+	out << "(" << t.first << ", " << t.second << ")";
+	return out;
+}
+
+ostream& operator<<(ostream& out, set<string>& s) {
+	for (auto item : s) {
+		out << item << " ";
+	}
+	return out;
+}
+
 void output()
 {
 	cout << scanOut << endl;

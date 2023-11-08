@@ -21,6 +21,13 @@ using namespace std;
 
 #define KEYWORDNUM 8
 
-#define DEBUG_LL
+#define nDEBUG_LL
+#define DEBUG_LLNRC
+
+// 词法单元
+struct Token {
+	string first, second;
+	int pos, line;
+};
 
 string infixToPostfix(const string& regex); // 已弃用

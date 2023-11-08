@@ -4,17 +4,15 @@
 #include "TESTscan2.h"
 #include "RegExp.h"
 #include "LL.h"
+#include "LLNRec.h"
 
 #define INPUTPATH "E:\\Progress\\Compiler\\test.T"
 #define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
 
-//extern int TESTscan();
-TESTscan2 lexer;
-extern int TESTparse(string &source, string &lexerOut);
-//char Scanin[300], Scanout[300];
-//FILE* fin, * fout;
-int main() {
+#define LLNRC_TEST1
 
+int main() {
+	
 	string inputPath, outputPath;
 #ifdef INPUTPATH
 	inputPath = INPUTPATH;
@@ -26,20 +24,45 @@ int main() {
 	cin >> outputPath;
 #endif
 
-	int es = 0;
-	//es = TESTscan();
-	es = lexer.scan(inputPath, outputPath);
-	if (es > 0) printf("词法分析有错, 编译终止!\n");
-	else printf("词法分析成功!\n");
-	//return 0;
-	if (es == 0)
-	{
-		es = TESTparse(inputPath, outputPath);
-		if (es > 0) printf("语法分析有错, 编译终止!\n");
-		else printf("语法分析成功!\n");
-	}
+#ifdef LLNRC_TEST1
+	LLNRec parser(outputPath);
+#endif // LLNRC_TEST1
+
 	return 0;
 }
+
+//extern int TESTscan();
+//TESTscan2 lexer;
+//extern int TESTparse(string &source, string &lexerOut);
+////char Scanin[300], Scanout[300];
+////FILE* fin, * fout;
+//int main() {
+//
+//	string inputPath, outputPath;
+//#ifdef INPUTPATH
+//	inputPath = INPUTPATH;
+//	outputPath = OUTPUTPATH;
+//#else
+//	cout << "请输入输入文件位置:" << endl;
+//	cin >> inputPath;
+//	cout << "请输入输出文件位置:" << endl;
+//	cin >> outputPath;
+//#endif
+//
+//	int es = 0;
+//	//es = TESTscan();
+//	es = lexer.scan(inputPath, outputPath);
+//	if (es > 0) printf("词法分析有错, 编译终止!\n");
+//	else printf("词法分析成功!\n");
+//	//return 0;
+//	if (es == 0)
+//	{
+//		es = TESTparse(inputPath, outputPath);
+//		if (es > 0) printf("语法分析有错, 编译终止!\n");
+//		else printf("语法分析成功!\n");
+//	}
+//	return 0;
+//}
 
 
 /*#include "TESTscan.h"
