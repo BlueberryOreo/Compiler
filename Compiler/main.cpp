@@ -6,8 +6,8 @@
 #include "LL.h"
 #include "LLNRec.h"
 
-#define INPUTPATH "E:\\Progress\\Compiler\\test.T"
-#define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
+#define INPUTPATH "E:\\Progress\\Compiler\\school\\test.T"
+#define OUTPUTPATH "E:\\Progress\\Compiler\\school\\out.T"
 
 #define LLNRC_TEST1
 

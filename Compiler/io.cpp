@@ -115,7 +115,11 @@ void error(int type, ifstream* ifs, int shift, string info, int inputLine) {
 		ifs->seekg(shift);
 		//cout << shift << " " << inputLine << endl;
 		while ((c = ifs->get()) != '\n' && c != EOF) q.push_back(c);
+		//ifs->seekg(--shift);
+		//ifs->seekg(shift - 2);
+		//cout << "95: " << (char)ifs->get() << endl;
 		ifs->seekg(--shift);
+		//cout << shift << " " << inputLine << endl;
 		while ((c = ifs->get()) != '\n' && shift >= 0) q.push_front(c), ifs->seekg(--shift);
 		//cout << shift << " " << inputLine << endl;
 		if (q.empty()) {

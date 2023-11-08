@@ -22,12 +22,13 @@ int compoundList();
 //extern char Scanout[300];
 ifstream fp;
 int currentPos, currentLine;
+int tab = 0;
 
 void getToken(Token &t) {
 	fp >> t;
 	currentPos = t.pos;
 	currentLine = t.line;
-	cout << currentPos << " " << currentLine << endl;
+	//cout << currentPos << " " << currentLine << endl;
 }
 
 //语法分析程序
@@ -71,6 +72,10 @@ int TESTparse(string &source, string &lexerOut) {
 //  <program> -> { <declaration_list><statement_list> }
 int program() 
 {
+#ifdef OUTPUT_TREE
+	cout << "<program>" << endl;
+	tab++;
+#endif
 	Token t;
 	getToken(t);
 	if (t.first == "{") {
@@ -151,13 +156,13 @@ int expression()
 			if (es > 0) return es;
 		}
 		else {
-			cout << "169here" << endl;
+			//cout << "169here" << endl;
 			//fseek(fp, fileadd, 0); //若非=, 则文件指针回到=前的标识符
 			fp.seekg(begin);
 			//printf("%s $s\n", token, token1);
 			//cout << t1 << endl;
 			es = boolExpr();
-			cout << "175 es=" << es << endl;
+			//cout << "175 es=" << es << endl;
 			if (es > 0) return es;
 		}
 	}
@@ -239,6 +244,7 @@ int factor()
 		if (es > 0) return es;
 		getToken(t);
 		if (t.first != ")") return 1;
+		else return 0;
 	}
 	else if (t.first == "ID") return 0;
 	else if (t.first == "NUM") return 0;
@@ -327,8 +333,14 @@ int writeStat()
 		return -1;
 	}
 	int es = expression();
+#ifdef DEBUG_LL
+	cout << "346 es=" << es << endl;
+#endif
 	if (es > 0) return es;
 	getToken(t);
+#ifdef DEBUG_LL
+	cout << "351 token=" << t << endl;
+#endif
 	if (t.first != ";") return 3;
 	return 0;
 }
