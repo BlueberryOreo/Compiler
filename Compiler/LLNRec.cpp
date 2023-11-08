@@ -46,42 +46,52 @@ void LLNRec::initFirst()
 void LLNRec::initFollow()
 {
 	follow[begin].insert("$");
-	for (it_msv it = gramma.begin(); it != gramma.end(); it ++) {
-		for (string right: it->second) {
-			vector<string> rightItems;
-			right.push_back(' ');
-			string tmpRight = "";
-			for (char c: right) {
-				if (c == ' ') {
-					rightItems.push_back(tmpRight);
-					tmpRight.clear();
-				}
-				else {
-					tmpRight.push_back(c);
-				}
-			}
-			cout << it->first << " rightItems=" << rightItems << endl; // here
-			set<string> tmpFirst = follow[it->first];
-			for (int i = rightItems.size() - 1; i >= 0; i --) {
-				if (gramma.find(rightItems[i]) == gramma.end()) {
-					tmpFirst.clear();
-					tmpFirst.insert(rightItems[i]);
-					continue;
-				}
-				bool hasEps = false; // 下一个非终结符的FIRST中是否有空 
-				if ((i <= rightItems.size() - 1) && (gramma.find(rightItems[i + 1]) != gramma.end())) {
-					for (auto item: first[rightItems[i + 1]]) {
-						if (item == E) hasEps = true;
-						else follow[rightItems[i]].insert(item);
+	while (true) {
+		bool changed = false;
+		for (it_msv it = gramma.begin(); it != gramma.end(); it++) {
+			//cout << it->first << "->" << it->second << endl;
+			for (string right : it->second) {
+				vector<string> rightItems;
+				right.push_back(' ');
+				string tmpRight = "";
+				for (char c : right) {
+					if (c == ' ') {
+						rightItems.push_back(tmpRight);
+						tmpRight.clear();
+					}
+					else {
+						tmpRight.push_back(c);
 					}
 				}
-				if (hasEps) {
-					set_union(follow[rightItems[i]].begin(), follow[rightItems[i]].end(), tmpFirst.begin(), tmpFirst.end(), 
+				//cout << it->first << " rightItems=" << rightItems << endl; // here
+				set<string> tmpFirst = follow[it->first];
+				for (int i = rightItems.size() - 1; i >= 0; i--) {
+					if (gramma.find(rightItems[i]) == gramma.end()) {
+						tmpFirst.clear();
+						tmpFirst.insert(rightItems[i]);
+						continue;
+					}
+					int lastLen = follow[rightItems[i]].size();
+					if ((i < rightItems.size() - 1) && (gramma.find(rightItems[i + 1]) != gramma.end())) {
+						for (auto item : first[rightItems[i + 1]]) {
+							if (item != E) follow[rightItems[i]].insert(item);
+						}
+					}
+
+					set_union(follow[rightItems[i]].begin(), follow[rightItems[i]].end(), tmpFirst.begin(), tmpFirst.end(),
 						inserter(follow[rightItems[i]], follow[rightItems[i]].begin()));
+
+					if (follow[rightItems[i]].size() != lastLen) changed = true;
+
+					if (first[rightItems[i]].find(E) == first[rightItems[i]].end()) tmpFirst.clear();
+					else {
+						set_union(first[rightItems[i]].begin(), first[rightItems[i]].end(), tmpFirst.begin(), tmpFirst.end(), inserter(tmpFirst, tmpFirst.begin()));
+						tmpFirst.erase(E);
+					}
 				}
-				else tmpFirst.clear();
 			}
 		}
+		if (!changed) break;
 	}
 }
 
@@ -91,10 +101,14 @@ LLNRec::LLNRec(string &lexerOut) {
 	initGramma();
 	initFirst();
 	initFollow();
-//#ifdef DEBUG_LLNRC
-//	for (map<string, set<string> >::iterator it = first.begin(); it != first.end(); it++) {
-//		cout << "FIRST(" << it->first << ") = " << it->second << endl;
-//	}
-//#endif // DEBUG_LLNRC
+#ifdef DEBUG_LLNRC
+	for (it_mss it = first.begin(); it != first.end(); it++) {
+		cout << "FIRST(" << it->first << ") = " << it->second << endl;
+	}
+
+	for (it_mss it = follow.begin(); it != follow.end(); it ++) {
+		cout << "FOLLOW(" << it->first << ") = " << it->second << endl;
+	}
+#endif // DEBUG_LLNRC
 
 }
