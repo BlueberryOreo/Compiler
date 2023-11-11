@@ -40,10 +40,12 @@ int main() {
 
 #ifdef LLNRC_TEST1
 	LLNRec parser;
+	parser.showTable();
+	//string test = "id + id * id $";
 	//string test = "id + id * ( id + id ) $";
-	string test = "( id + id ) * id * id + id $";
-	vector<Token> testTokens = getTokens(test);
-	parser.analyze(testTokens);
+	//string test = "( id + id ) * id * id + id $";
+	//vector<Token> testTokens = getTokens(test);
+	//parser.analyze(testTokens);
 #endif // LLNRC_TEST1
 
 	return 0;

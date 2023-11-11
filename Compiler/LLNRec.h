@@ -14,6 +14,11 @@ private:
 	map<string, set<string> > first;
 	map<string, set<string> > follow;
 	map<string, map<string, pair<string, vector<string> > > > predictTable;
+
+	int nodeCnt = 0;
+	map<string, string> nodes;
+	stack<string> nodeStk;
+
 	typedef map<string, set<string> >::iterator it_mss;
 	typedef map<string, vector<string> >::iterator it_msv;
 
@@ -26,14 +31,13 @@ private:
 	void initFollow();
 	void buildTable();
 
-	void showTable();
-
+	void initStk();
 	void outputStk();
-
 	int move(Token& t);
 
 public:
 	LLNRec();
+	void showTable();
 	void analyze(string& lexerOut);
 	void analyze(vector<Token> &tokens);
 };
