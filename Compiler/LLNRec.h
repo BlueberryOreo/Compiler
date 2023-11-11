@@ -13,7 +13,7 @@ private:
 	map<string, vector<string> > gramma;
 	map<string, set<string> > first;
 	map<string, set<string> > follow;
-	map<string, map<string, pair<string, vector<string> > > > predictTable;
+	map<string, map<string, pair<string, vector<string> > > > predictTable; // predictTable[非终结符][输入符号] = 产生式(pair[左边，vector[右边]])
 
 	int nodeCnt = 0;
 	map<string, string> nodes;
