@@ -27,13 +27,22 @@ set<string> LLNRec::findFirst(string now)
 	if (!first[now].empty()) return first[now]; // ºÙ÷¶
 	for (string right : gramma[now]) {
 		//cout << "right=" << right << endl;
-		string tmpFirst = "";
-		for (char c : right) {
-			if (c == ' ') break;
-			tmpFirst.push_back(c);
-		}
-		for (string s : findFirst(tmpFirst)) {
-			first[now].insert(s);
+		vector<string> rightItems = getRightItems(right);
+		bool allEps = true;
+		for (string r: rightItems) {
+			bool hasEps = false;
+			for (string item: findFirst(r)) {
+				if (item == E) {
+					hasEps = true;
+					break;
+				}
+				first[now].insert(item);
+			}
+			if (!hasEps) {
+				allEps = false;
+				break;
+			}
+			if (allEps) first[now].insert(E);
 		}
 	}
 	return first[now];
@@ -154,9 +163,42 @@ void LLNRec::showTable()
 	}
 }
 
-LLNRec::LLNRec(string &lexerOut) {
-	lexer.open(lexerOut.c_str());
-	if (!lexer) throw "Cannot open file " + lexerOut;
+void LLNRec::outputStk() {
+	stack<string> tmp;
+	while (!stk.empty()) {
+		tmp.push(stk.top());
+		stk.pop();
+		cout << tmp.top() << " ";
+	}
+	cout << endl;
+	while (!tmp.empty()) {
+		stk.push(tmp.top());
+		tmp.pop();
+	}
+}
+
+// 0 - don't move, 1 - move next, 2 - error1, 3 - error2
+int LLNRec::move(Token &t)
+{
+	if (stk.top() == t.first) {
+		cout << "∆•≈‰" << stk.top() << endl;
+		stk.pop();
+		return 1;
+	}
+	if (gramma.find(stk.top()) == gramma.end()) return 2;
+	if (predictTable[stk.top()][t.first].first.size() == 0) return 3;
+	pair<string, vector<string> > p = predictTable[stk.top()][t.first];
+	cout << p.first << "->" << p.second << endl;
+	//cout << "stack:" << endl;
+	//outputStk();
+	stk.pop();
+	for (int i = p.second.size() - 1; i >= 0; i --) {
+		if(p.second[i] != E) stk.push(p.second[i]);
+	}
+	return 0;
+}
+
+LLNRec::LLNRec() {
 	initGramma();
 	initFirst();
 	initFollow();
@@ -171,4 +213,23 @@ LLNRec::LLNRec(string &lexerOut) {
 	}
 #endif // DEBUG_LLNRC
 	showTable();
+}
+
+void LLNRec::analyze(string& lexerOut) {
+	stk.push("$");
+	stk.push(begin);
+}
+
+void LLNRec::analyze(vector<Token> &tokens) {
+	stk.push("$");
+	stk.push(begin);
+	int idx = 0;
+	while (!stk.empty()) {
+		int res = move(tokens[idx]);
+		if (res == 1) idx++;
+		else if (res >= 2) {
+			cout << "error" << res - 1 << endl;
+			break;
+		}
+	}
 }

@@ -11,6 +11,20 @@
 
 #define LLNRC_TEST1
 
+vector<Token> getTokens(string testStr) {
+	vector<Token> ret;
+	string tmp = "";
+	testStr.push_back(' ');
+	for (char c: testStr) {
+		if (c == ' ') {
+			ret.push_back(Token{ tmp, tmp, 0, 0 });
+			tmp.clear();
+		}
+		else tmp.push_back(c);
+	}
+	return ret;
+}
+
 int main() {
 	
 	string inputPath, outputPath;
@@ -25,7 +39,11 @@ int main() {
 #endif
 
 #ifdef LLNRC_TEST1
-	LLNRec parser(outputPath);
+	LLNRec parser;
+	//string test = "id + id * ( id + id ) $";
+	string test = "( id + id ) * id * id + id $";
+	vector<Token> testTokens = getTokens(test);
+	parser.analyze(testTokens);
 #endif // LLNRC_TEST1
 
 	return 0;

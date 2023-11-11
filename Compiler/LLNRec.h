@@ -9,6 +9,7 @@ private:
 	ifstream lexer;
 	string begin;
 	set<string> inputSign;
+	stack<string> stk;
 	map<string, vector<string> > gramma;
 	map<string, set<string> > first;
 	map<string, set<string> > follow;
@@ -27,6 +28,12 @@ private:
 
 	void showTable();
 
+	void outputStk();
+
+	int move(Token& t);
+
 public:
-	LLNRec(string& lexerOut);
+	LLNRec();
+	void analyze(string& lexerOut);
+	void analyze(vector<Token> &tokens);
 };
