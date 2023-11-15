@@ -334,7 +334,7 @@ vector<Token> LLNRec::getTokensFromFile(string& lexerOut) {
 	while (lexerIfs >> now) {
 		ret.push_back(now);
 	}
-	ret.push_back(Token{"$", "$", 0, 0});
+	ret.push_back(Token{"$", "$", now.pos + (int)now.second.size(), now.line});
 	return ret;
 }
 
