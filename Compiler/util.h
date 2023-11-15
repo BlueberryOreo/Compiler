@@ -23,7 +23,7 @@ using namespace std;
 #define KEYWORDNUM 8
 
 #define nDEBUG_LL
-#define nDEBUG_LLNRC
+#define DEBUG_LLNRC
 
 // ´Ê·¨µ¥Ôª
 struct Token {

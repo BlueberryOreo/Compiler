@@ -1,38 +1,39 @@
 #include "LLNRec.h"
 
-void LLNRec::initGramma()
+void LLNRec::initGrammar()
 {
-	//begin = "E";
 	// 输入语法要求：一个产生式的右侧的每个元素用空格隔开
-	//gramma["E"] = vector<string>{ "T E'" };
-	//gramma["E'"] = vector<string>{ "+ T E'", E };
-	//gramma["T"] = vector<string>{ "F T'" };
-	//gramma["T'"] = vector<string>{ "* F T'", E };
-	//gramma["F"] = vector<string>{ "( E )", "id" };
+	//begin = "E";
+	//grammar["E"] = vector<string>{ "T E'" };
+	//grammar["E'"] = vector<string>{ "+ T E'", E };
+	//grammar["T"] = vector<string>{ "F T'" };
+	//grammar["T'"] = vector<string>{ "* F T'", E };
+	//grammar["F"] = vector<string>{ "( E )", "id" };
 
 	begin = "<program>";
-	gramma["<program>"] = vector<string>{ "{  <declaration_list>  <statement_list>  }" };
-	gramma["<declaration_list>"] = vector<string>{ "ε <declaration_list_r> " };
-	gramma["<declaration_list_r>"] = vector<string>{ " <declaration_state>  <declaration_list_r>", "ε" };
-	gramma["<declaration_stat>"] = vector<string>{"int ID ;"};
-	gramma["<statement_list>"] = vector<string>{ "ε <statement_list_R> " };
-	gramma["<statement_list_R>"] = vector<string>{ " <statement>  <statement_list_R>", "ε" };
-	gramma["<statement>"] = vector<string>{" <if_stat> ", " <while_stat>", "<for_stat>", "<read_stat>", "<write_stat>", "<compound_stat>", "< expression_stat> "};
-	//gramma["<if_stat>"] = vector<string>{"if ( <expression> ) <statement> [ else <statement> ]"};
-	gramma["<while_stat>"] = vector<string>{"while ( <expression> )  <statement> "};
-	gramma["<for_stat>"] = vector<string>{"for (   <expression>   ;   <expression>   ;   <expression>   )  <statement> "};
-	gramma["<write_stat>"] = vector<string>{"write  <expression> ;"};
-	gramma["<read_stat>"] = vector<string>{"read ID ;"};
-	gramma["<compound_stat>"] = vector<string>{"{ <statement_list> }"};
-	gramma["<expression_stat>"] = vector<string>{" <expression> ;", ";"}; 
-	gramma["<expression>"] = vector<string>{"ID = <bool_expr>", "<bool_expr>  "};
-	gramma["<bool_expr>"] = vector<string>{"<additive_expr>", "<additive_expr> > <additive_expr>", "<additive_expr> < <additive_expr>",
+	grammar["<program>"] = vector<string>{ "{  <declaration_list>  <statement_list>  }" };
+	grammar["<declaration_list>"] = vector<string>{ "ε <declaration_list_r> " };
+	grammar["<declaration_list_r>"] = vector<string>{ " <declaration_state>  <declaration_list_r>", E };
+	grammar["<declaration_stat>"] = vector<string>{"int ID ;"};
+	grammar["<statement_list>"] = vector<string>{ "ε <statement_list_R> " };
+	grammar["<statement_list_R>"] = vector<string>{ " <statement>  <statement_list_R>", E };
+	grammar["<statement>"] = vector<string>{" <if_stat> ", " <while_stat>", "<for_stat>", "<read_stat>", "<write_stat>", "<compound_stat>", "<expression_stat> "};
+	grammar["<if_stat>"] = vector<string>{"if ( <expression> ) <statement> <else_part>"};
+	grammar["<else_part>"] = vector<string>{"else <statement>", E};
+	grammar["<while_stat>"] = vector<string>{"while ( <expression> )  <statement> "};
+	grammar["<for_stat>"] = vector<string>{"for (   <expression>   ;   <expression>   ;   <expression>   )  <statement> "};
+	grammar["<write_stat>"] = vector<string>{"write  <expression> ;"};
+	grammar["<read_stat>"] = vector<string>{"read ID ;"};
+	grammar["<compound_stat>"] = vector<string>{"{ <statement_list> }"};
+	grammar["<expression_stat>"] = vector<string>{" <expression> ;", ";"}; 
+	grammar["<expression>"] = vector<string>{"ID = <bool_expr>", "<bool_expr>  "};
+	grammar["<bool_expr>"] = vector<string>{"<additive_expr>", "<additive_expr> > <additive_expr>", "<additive_expr> < <additive_expr>",
 	"<additive_expr> >= <additive_expr>", "<additive_expr> <= <additive_expr>", "<additive_expr> == <additive_expr>", "<additive_expr> != <additive_expr>"};
-	gramma["<additive_expr>"] = vector<string>{ "<term> + <term>", "<term> - <term>" };
-	gramma["<term>"] = vector<string>{ "<factor> * <factor>", "<factor> / <factor>" };
-	gramma["<factor>"] = vector<string>{"( <expression> )", "ID", "NUM"};
+	grammar["<additive_expr>"] = vector<string>{ "<term> + <term>", "<term> - <term>" };
+	grammar["<term>"] = vector<string>{ "<factor> * <factor>", "<factor> / <factor>" };
+	grammar["<factor>"] = vector<string>{"( <expression> )", "ID", "NUM"};
 
-	for (map<string, vector<string> >::iterator it = gramma.begin(); it != gramma.end(); it++) {
+	for (map<string, vector<string> >::iterator it = grammar.begin(); it != grammar.end(); it++) {
 		first[it->first] = set<string>();
 		follow[it->first] = set<string>();
 		predictTable[it->first] = map<string, pair<string, vector<string> > >();
@@ -43,11 +44,11 @@ void LLNRec::initGramma()
 set<string> LLNRec::findFirst(string now)
 {
 	//cout << "now=" << now << endl;
-	if (gramma.find(now) == gramma.end()) {
+	if (grammar.find(now) == grammar.end()) {
 		return set<string>{now};
 	}
 	if (!first[now].empty()) return first[now]; // 剪枝
-	for (string right : gramma[now]) {
+	for (string right : grammar[now]) {
 		//cout << "right=" << right << endl;
 		vector<string> rightItems = getRightItems(right);
 		bool allEps = true;
@@ -72,7 +73,7 @@ set<string> LLNRec::findFirst(string now)
 
 void LLNRec::initFirst()
 {
-	for (it_msv it = gramma.begin(); it != gramma.end(); it ++) {
+	for (it_msv it = grammar.begin(); it != grammar.end(); it ++) {
 		findFirst(it->first);
 	}
 }
@@ -102,7 +103,7 @@ void LLNRec::initFollow()
 	inputSign.insert("$");
 	while (true) {
 		bool changed = false;
-		for (it_msv it = gramma.begin(); it != gramma.end(); it++) {
+		for (it_msv it = grammar.begin(); it != grammar.end(); it++) {
 			//cout << it->first << "->" << it->second << endl;
 			for (string right : it->second) {
 				vector<string> rightItems = getRightItems(right);
@@ -110,14 +111,14 @@ void LLNRec::initFollow()
 				set<string> tmpFirst = follow[it->first]; // 连续空时FIRST的继承
 				// 反向遍历构造follow，以处理空
 				for (int i = rightItems.size() - 1; i >= 0; i--) {
-					if (gramma.find(rightItems[i]) == gramma.end()) {
+					if (grammar.find(rightItems[i]) == grammar.end()) {
 						inputSign.insert(rightItems[i]);
 						tmpFirst.clear();
 						tmpFirst.insert(rightItems[i]);
 						continue;
 					}
 					int lastLen = follow[rightItems[i]].size();
-					if ((i < rightItems.size() - 1) && (gramma.find(rightItems[i + 1]) != gramma.end())) {
+					if ((i < rightItems.size() - 1) && (grammar.find(rightItems[i + 1]) != grammar.end())) {
 						for (auto item : first[rightItems[i + 1]]) {
 							if (item != E) follow[rightItems[i]].insert(item);
 						}
@@ -144,12 +145,12 @@ void LLNRec::initFollow()
 // 书算法4.31
 void LLNRec::buildTable()
 {
-	for (it_msv it = gramma.begin(); it != gramma.end(); it ++) {
+	for (it_msv it = grammar.begin(); it != grammar.end(); it ++) {
 		for (auto right: it->second) {
 			vector<string> rightItems = getRightItems(right);
 			pair<string, vector<string> > p = { it->first, rightItems };
 			//cout << rightItems << endl;
-			if (gramma.find(rightItems[0]) == gramma.end()) predictTable[it->first][rightItems[0]] = p;
+			if (grammar.find(rightItems[0]) == grammar.end()) predictTable[it->first][rightItems[0]] = p;
 
 			bool hasEps = (rightItems[0] == E);
 			for (auto terminal: first[rightItems[0]]) {
@@ -174,7 +175,7 @@ void LLNRec::showTable()
 	//	cout << setw(14) << left << s;
 	//}
 	//cout << endl;
-	//for (it_msv it = gramma.begin(); it != gramma.end(); it ++) {
+	//for (it_msv it = grammar.begin(); it != grammar.end(); it ++) {
 	//	cout << setw(10) << left << it->first;
 	//	for (auto s: sign) {
 	//		pair<string, vector<string> > p = predictTable[it->first][s];
@@ -192,7 +193,7 @@ void LLNRec::showTable()
 		cout << s << "\\t";
 	}
 	cout << endl;
-	for (it_msv it = gramma.begin(); it != gramma.end(); it ++) {
+	for (it_msv it = grammar.begin(); it != grammar.end(); it ++) {
 		cout << it->first << "\\t";
 		for (auto s: sign) {
 			pair<string, vector<string> > p = predictTable[it->first][s];
@@ -237,7 +238,7 @@ int LLNRec::move(Token &t)
 		nodeStk.pop();
 		return 1;
 	}
-	if (gramma.find(stk.top()) == gramma.end()) return 2;
+	if (grammar.find(stk.top()) == grammar.end()) return 2;
 	if (predictTable[stk.top()][t.first].first.size() == 0) return 3;
 	pair<string, vector<string> > p = predictTable[stk.top()][t.first];
 	//cout << p.first << "->" << p.second << endl;
@@ -267,7 +268,7 @@ int LLNRec::move(Token &t)
 }
 
 LLNRec::LLNRec() {
-	initGramma();
+	initGrammar();
 	initFirst();
 	initFollow();
 	buildTable();
