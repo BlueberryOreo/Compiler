@@ -31,6 +31,11 @@ private:
 	void initFollow();
 	void buildTable();
 
+	bool specialCheck(string left, string rightItems0, string terminal);
+	vector<Token> getTokensFromFile(string &lexerOut);
+
+	void updatePoints(vector<string> &nextLayer, string &nodeNode);
+
 	void initStk();
 	void outputStk();
 	int move(Token& t);
@@ -38,6 +43,6 @@ private:
 public:
 	LLNRec();
 	void showTable();
-	void analyze(string& lexerOut);
-	void analyze(vector<Token> &tokens);
+	int analyze(string& lexerOut);
+	int analyze(vector<Token> &tokens);
 };

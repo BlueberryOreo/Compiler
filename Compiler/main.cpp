@@ -9,7 +9,7 @@
 #define INPUTPATH "E:\\Progress\\Compiler\\test.T"
 #define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
 
-#define LLNRC_TEST1
+#define nLLNRC_TEST1
 
 vector<Token> getTokens(string testStr) {
 	vector<Token> ret;
@@ -46,6 +46,17 @@ int main() {
 	//string test = "( id + id ) * id * id + id $";
 	//vector<Token> testTokens = getTokens(test);
 	//parser.analyze(testTokens);
+#else
+	TESTscan2 lexer;
+	int lexerRes = lexer.scan(inputPath, outputPath);
+	if (lexerRes > 0) {
+		cout << "词法分析有误，编译终止！" << endl;
+		return 1;
+	}
+	cout << "词法分析成功！" << endl;
+	LLNRec parser;
+	parser.showTable();
+	parser.analyze(outputPath);
 #endif // LLNRC_TEST1
 
 	return 0;

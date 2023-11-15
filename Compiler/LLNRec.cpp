@@ -12,10 +12,10 @@ void LLNRec::initGrammar()
 
 	begin = "<program>";
 	grammar["<program>"] = vector<string>{ "{  <declaration_list>  <statement_list>  }" };
-	grammar["<declaration_list>"] = vector<string>{ "ε <declaration_list_r> " };
-	grammar["<declaration_list_r>"] = vector<string>{ " <declaration_state>  <declaration_list_r>", E };
+	grammar["<declaration_list>"] = vector<string>{ "<declaration_list_R> " };
+	grammar["<declaration_list_R>"] = vector<string>{ " <declaration_stat>  <declaration_list_R>", E };
 	grammar["<declaration_stat>"] = vector<string>{"int ID ;"};
-	grammar["<statement_list>"] = vector<string>{ "ε <statement_list_R> " };
+	grammar["<statement_list>"] = vector<string>{ "<statement_list_R> " };
 	grammar["<statement_list_R>"] = vector<string>{ " <statement>  <statement_list_R>", E };
 	grammar["<statement>"] = vector<string>{" <if_stat> ", " <while_stat>", "<for_stat>", "<read_stat>", "<write_stat>", "<compound_stat>", "<expression_stat> "};
 	grammar["<if_stat>"] = vector<string>{"if ( <expression> ) <statement> <else_part>"};
@@ -26,11 +26,14 @@ void LLNRec::initGrammar()
 	grammar["<read_stat>"] = vector<string>{"read ID ;"};
 	grammar["<compound_stat>"] = vector<string>{"{ <statement_list> }"};
 	grammar["<expression_stat>"] = vector<string>{" <expression> ;", ";"}; 
-	grammar["<expression>"] = vector<string>{"ID = <bool_expr>", "<bool_expr>  "};
-	grammar["<bool_expr>"] = vector<string>{"<additive_expr>", "<additive_expr> > <additive_expr>", "<additive_expr> < <additive_expr>",
-	"<additive_expr> >= <additive_expr>", "<additive_expr> <= <additive_expr>", "<additive_expr> == <additive_expr>", "<additive_expr> != <additive_expr>"};
-	grammar["<additive_expr>"] = vector<string>{ "<term> + <term>", "<term> - <term>" };
-	grammar["<term>"] = vector<string>{ "<factor> * <factor>", "<factor> / <factor>" };
+	grammar["<expression>"] = vector<string>{"ID = <bool_expr>", "<bool_expr>"}; // 问题
+	grammar["<bool_expr>"] = vector<string>{"<additive_expr> <bool_expr_right>"};
+	grammar["<bool_expr_right>"] = vector<string>{"> <additive_expr>", "< <additive_expr>", 
+		">= <additive_expr>", "<= <additive_expr>", "== <additive_expr>", "!= <additive_expr>", E};
+	grammar["<additive_expr>"] = vector<string>{ "<term> <additive_expr_right>"};
+	grammar["<additive_expr_right>"] = vector<string>{"+ <term>", "- <term>", E};
+	grammar["<term>"] = vector<string>{ "<factor> <term_right>" };
+	grammar["<term_right>"] = vector<string>{"* <factor>", "/ <factor>", E};
 	grammar["<factor>"] = vector<string>{"( <expression> )", "ID", "NUM"};
 
 	for (map<string, vector<string> >::iterator it = grammar.begin(); it != grammar.end(); it++) {
@@ -142,6 +145,13 @@ void LLNRec::initFollow()
 	}
 }
 
+bool LLNRec::specialCheck(string left, string rightItems0, string terminal) {
+	if (left == "<else_part>" && rightItems0 == E && terminal == "else") return true; // 处理悬空else
+	if (left == "<expression>" && rightItems0 == "<bool_expr>" && terminal == "ID") return true;
+	//if (left == "<bool_expr>" && rightItems0 == "<additive_expr>" && terminal == "NUM") return true;
+	return false;
+}
+
 // 书算法4.31
 void LLNRec::buildTable()
 {
@@ -156,10 +166,12 @@ void LLNRec::buildTable()
 			for (auto terminal: first[rightItems[0]]) {
 				//cout << it->first << " " << terminal << " " << it->second << endl;
 				if (terminal == E) hasEps = true;
-				else predictTable[it->first][terminal] = p;
+				else if(!specialCheck(it->first, rightItems[0], terminal)) predictTable[it->first][terminal] = p;
 			}
 			if (hasEps) {
-				for (auto terminal : follow[it->first]) predictTable[it->first][terminal] = p;
+				for (auto terminal : follow[it->first]) {
+					if(!specialCheck(it->first, rightItems[0], terminal)) predictTable[it->first][terminal] = p; // 特别处理
+				}
 			}
 		}
 	}
@@ -228,9 +240,52 @@ void LLNRec::outputStk() {
 	}
 }
 
-// 0 - don't move, 1 - move next, 2 - error1, 3 - error2
+void LLNRec::updatePoints(vector<string>& nextLayer, string &nowNode) {
+	vector<string> outputLines;
+	for (int i = nextLayer.size() - 1; i >= 0; i--) {
+		if (nextLayer[i] != E) stk.push(nextLayer[i]);
+		stringstream nodeNo;
+		string line;
+		nodeNo << "Node" << nodeCnt;
+		nodeCnt++;
+		line = nowNode + " -- " + nodeNo.str() + ";";
+		outputLines.push_back(line);
+		if (nextLayer[i] != E) nodeStk.push(nodeNo.str());
+		else nodes[nodeNo.str()] = E;
+	}
+	for (int i = outputLines.size() - 1; i >= 0; i--) {
+		cout << outputLines[i] << endl;
+	}
+}
+
+// 0 - don't move, 1 - move next, 2 - error1, 3 - error2, -1 - go back
 int LLNRec::move(Token &t)
 {
+	//cout << stk.top() << " " << t << endl;
+	if (stk.top() == "<expression>") {
+		// expression特判，向前读一个再决定产生式
+		if (t.first == "ID") return 1;
+
+		string nowNode = nodeStk.top();
+		nodeStk.pop();
+		nodes[nowNode] = stk.top();
+		stk.pop();
+
+		vector<string> p;
+		if (t.first == "=") {
+			//cout << "输出<expression>->ID = <bool_expr>" << endl;
+			p.push_back("ID");
+			p.push_back("=");
+			p.push_back("<bool_expr>");
+		}
+		else {
+			//cout << "输出<expression>-><bool_expr>" << endl;
+			p.push_back("<bool_expr>");
+		}
+
+		updatePoints(p, nowNode);
+		return -1;
+	}
 	if (stk.top() == t.first) {
 		//cout << "匹配" << stk.top() << endl;
 		stk.pop();
@@ -241,7 +296,7 @@ int LLNRec::move(Token &t)
 	if (grammar.find(stk.top()) == grammar.end()) return 2;
 	if (predictTable[stk.top()][t.first].first.size() == 0) return 3;
 	pair<string, vector<string> > p = predictTable[stk.top()][t.first];
-	//cout << p.first << "->" << p.second << endl;
+	//cout << "输出" << p.first << "->" << p.second << endl;
 
 	string nowNode = nodeStk.top();
 	nodeStk.pop();
@@ -249,21 +304,7 @@ int LLNRec::move(Token &t)
 
 	stk.pop();
 
-	vector<string> outputLines;
-	for (int i = p.second.size() - 1; i >= 0; i --) {
-		if (p.second[i] != E) stk.push(p.second[i]);
-		stringstream nodeNo;
-		string line;
-		nodeNo << "Node" << nodeCnt;
-		nodeCnt++;
-		line = nowNode + " -- " + nodeNo.str() + ";";
-		outputLines.push_back(line);
-		if (p.second[i] != E) nodeStk.push(nodeNo.str());
-		else nodes[nodeNo.str()] = E;
-	}
-	for (int i = outputLines.size() - 1; i >= 0; i --) {
-		cout << outputLines[i] << endl;
-	}
+	updatePoints(p.second, nowNode);
 	return 0;
 }
 
@@ -280,24 +321,39 @@ LLNRec::LLNRec() {
 	for (it_mss it = follow.begin(); it != follow.end(); it ++) {
 		cout << "FOLLOW(" << it->first << ") = " << it->second << endl;
 	}
-	showTable();
+	//showTable();
 #endif // DEBUG_LLNRC
 }
 
-void LLNRec::analyze(string& lexerOut) {
-	initStk();
+vector<Token> LLNRec::getTokensFromFile(string& lexerOut) {
+	ifstream lexerIfs;
+	lexerIfs.open(lexerOut.c_str());
+	if (!lexerIfs) throw "Cannot open file " + lexerOut;
+	vector<Token> ret;
+	Token now;
+	while (lexerIfs >> now) {
+		ret.push_back(now);
+	}
+	ret.push_back(Token{"$", "$", 0, 0});
+	return ret;
 }
 
-void LLNRec::analyze(vector<Token> &tokens) {
+int LLNRec::analyze(string& lexerOut) {
+	vector<Token> tokens = getTokensFromFile(lexerOut);
+	return analyze(tokens);
+}
+
+int LLNRec::analyze(vector<Token> &tokens) {
 	initStk();
 	int idx = 0;
 	while (!stk.empty()) {
 		int res = move(tokens[idx]);
 		if (res == 1) idx++;
 		else if (res >= 2) {
-			cout << "error" << res - 1 << endl;
-			break;
+			cout << "error" << res - 1 << " " << tokens[idx] << endl;
+			return 1;
 		}
+		else if (res == -1) idx--;
 	}
 
 	for (map<string, string>::iterator it = nodes.begin(); it != nodes.end(); it ++) {
@@ -305,4 +361,5 @@ void LLNRec::analyze(vector<Token> &tokens) {
 		cout << it->first << " [label=\"" << it->second << "\"];" << endl;
 	}
 	cout << "}" << endl;
+	return 0;
 }
