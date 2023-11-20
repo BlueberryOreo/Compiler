@@ -24,6 +24,8 @@ using namespace std;
 
 #define nDEBUG_LL
 #define nDEBUG_LLNRC
+#define nOUTPUT_PREDICT_TABLE
+#define nOUTPUT_PARSE_TREE
 
 // ´Ê·¨µ¥Ôª
 struct Token {

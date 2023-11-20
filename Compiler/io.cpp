@@ -132,7 +132,7 @@ void error(int type, ifstream* ifs, int shift, string info, int inputLine) {
 		}
 		tmp -= shift;
 		cout << endl;
-		cout << string(max(0, tmp - 2), ' ') << string(min(2, tmp - 2), '~') << "^~~" << endl;
+		cout << string(max(0, tmp - 2), ' ') << string(min(2, tmp - 2), '~') << "~~~" << endl;
 		cout << info << endl;
 	}
 }

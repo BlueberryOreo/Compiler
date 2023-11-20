@@ -223,7 +223,9 @@ void LLNRec::initStk() {
 	nodeStk.push("Node0"); // $
 	nodeStk.push("Node1"); // begin
 	nodeCnt = 2;
+#ifdef OUTPUT_PARSE_TREE
 	cout << "graph Tree{" << endl;
+#endif
 }
 
 void LLNRec::outputStk() {
@@ -253,9 +255,11 @@ void LLNRec::updatePoints(vector<string>& nextLayer, string &nowNode) {
 		if (nextLayer[i] != E) nodeStk.push(nodeNo.str());
 		else nodes[nodeNo.str()] = E;
 	}
+#ifdef OUTPUT_PARSE_TREE
 	for (int i = outputLines.size() - 1; i >= 0; i--) {
 		cout << outputLines[i] << endl;
 	}
+#endif
 }
 
 // 0 - don't move, 1 - move next, 2 - error1, 3 - error2, -1 - go back
@@ -264,7 +268,10 @@ int LLNRec::move(Token &t)
 	//cout << stk.top() << " " << t << endl;
 	if (stk.top() == "<expression>") {
 		// expression特判，向前读一个再决定产生式
-		if (t.first == "ID") return 1;
+		if (t.first == "ID") {
+			isIdExpr = true;
+			return 1;
+		}
 
 		string nowNode = nodeStk.top();
 		nodeStk.pop();
@@ -272,22 +279,32 @@ int LLNRec::move(Token &t)
 		stk.pop();
 
 		vector<string> p;
-		if (t.first == "=") {
-			//cout << "输出<expression>->ID = <bool_expr>" << endl;
+		if (isIdExpr && t.first == "=") {
+#ifndef OUTPUT_PARSE_TREE
+			cout << "输出<expression>->ID = <bool_expr>" << endl;
+#endif
 			p.push_back("ID");
 			p.push_back("=");
 			p.push_back("<bool_expr>");
 		}
 		else {
-			//cout << "输出<expression>-><bool_expr>" << endl;
+#ifndef OUTPUT_PARSE_TREE
+			cout << "输出<expression>-><bool_expr>" << endl;
+#endif
 			p.push_back("<bool_expr>");
 		}
 
 		updatePoints(p, nowNode);
-		return -1;
+		if (isIdExpr) {
+			isIdExpr = false;
+			return -1;
+		}
+		return 0;
 	}
 	if (stk.top() == t.first) {
-		//cout << "匹配" << stk.top() << endl;
+#ifndef OUTPUT_PARSE_TREE
+		cout << "匹配" << stk.top() << endl;
+#endif
 		stk.pop();
 		nodes[nodeStk.top()] = t.first;
 		nodeStk.pop();
@@ -296,8 +313,9 @@ int LLNRec::move(Token &t)
 	if (grammar.find(stk.top()) == grammar.end()) return 2;
 	if (predictTable[stk.top()][t.first].first.size() == 0) return 3;
 	pair<string, vector<string> > p = predictTable[stk.top()][t.first];
-	//cout << "输出" << p.first << "->" << p.second << endl;
-
+#ifndef OUTPUT_PARSE_TREE
+	cout << "输出" << p.first << "->" << p.second << endl;
+#endif
 	string nowNode = nodeStk.top();
 	nodeStk.pop();
 	nodes[nowNode] = stk.top();
@@ -338,9 +356,19 @@ vector<Token> LLNRec::getTokensFromFile(string& lexerOut) {
 	return ret;
 }
 
-int LLNRec::analyze(string& lexerOut) {
+int LLNRec::analyze(string &sourcePath, string& lexerOut) {
 	vector<Token> tokens = getTokensFromFile(lexerOut);
-	return analyze(tokens);
+	int res = 1;
+	try {
+		res = analyze(tokens);
+	}
+	catch (Token errorToken) {
+		string info = "Unexpected token get \"" + errorToken.second + "\"";
+		ifstream ifs(sourcePath);
+		error(SYNTAXERROR, &ifs, errorToken.pos - 2, info, errorToken.line);
+		ifs.close();
+	}
+	return res;
 }
 
 int LLNRec::analyze(vector<Token> &tokens) {
@@ -350,16 +378,18 @@ int LLNRec::analyze(vector<Token> &tokens) {
 		int res = move(tokens[idx]);
 		if (res == 1) idx++;
 		else if (res >= 2) {
-			cout << "error" << res - 1 << " " << tokens[idx] << endl;
-			return 1;
+			//cout << "error" << res - 1 << " " << tokens[idx] << endl;
+			throw tokens[idx];
 		}
 		else if (res == -1) idx--;
 	}
 
+#ifdef OUTPUT_PARSE_TREE
 	for (map<string, string>::iterator it = nodes.begin(); it != nodes.end(); it ++) {
 		if (it->second == "$") continue;
 		cout << it->first << " [label=\"" << it->second << "\"];" << endl;
 	}
 	cout << "}" << endl;
+#endif
 	return 0;
 }

@@ -55,8 +55,15 @@ int main() {
 	}
 	cout << "词法分析成功！" << endl;
 	LLNRec parser;
+#ifdef OUTPUT_PREDICT_TABLE
 	parser.showTable();
-	parser.analyze(outputPath);
+#endif
+	int parseRes = parser.analyze(inputPath, outputPath);
+	if (parseRes > 0) {
+		cout << "语法分析有误，编译终止！" << endl;
+		return 1;
+	}
+	cout << "语法分析成功！" << endl;
 #endif // LLNRC_TEST1
 
 	return 0;

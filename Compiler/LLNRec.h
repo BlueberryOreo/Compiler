@@ -18,6 +18,7 @@ private:
 	int nodeCnt = 0;
 	map<string, string> nodes;
 	stack<string> nodeStk;
+	bool isIdExpr = false;
 
 	typedef map<string, set<string> >::iterator it_mss;
 	typedef map<string, vector<string> >::iterator it_msv;
@@ -43,6 +44,6 @@ private:
 public:
 	LLNRec();
 	void showTable();
-	int analyze(string& lexerOut);
+	int analyze(string &sourcePath, string& lexerOut);
 	int analyze(vector<Token> &tokens);
 };
