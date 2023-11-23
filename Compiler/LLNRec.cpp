@@ -3,38 +3,38 @@
 void LLNRec::initGrammar()
 {
 	// 输入语法要求：一个产生式的右侧的每个元素用空格隔开
-	//begin = "E";
-	//grammar["E"] = vector<string>{ "T E'" };
-	//grammar["E'"] = vector<string>{ "+ T E'", E };
-	//grammar["T"] = vector<string>{ "F T'" };
-	//grammar["T'"] = vector<string>{ "* F T'", E };
-	//grammar["F"] = vector<string>{ "( E )", "id" };
+	begin = "E";
+	grammar["E"] = vector<string>{ "T E'" };
+	grammar["E'"] = vector<string>{ "+ T E'", E };
+	grammar["T"] = vector<string>{ "F T'" };
+	grammar["T'"] = vector<string>{ "* F T'", E };
+	grammar["F"] = vector<string>{ "( E )", "id" };
 
-	begin = "<program>";
-	grammar["<program>"] = vector<string>{ "{  <declaration_list>  <statement_list>  }" };
-	grammar["<declaration_list>"] = vector<string>{ "<declaration_list_R> " };
-	grammar["<declaration_list_R>"] = vector<string>{ " <declaration_stat>  <declaration_list_R>", E };
-	grammar["<declaration_stat>"] = vector<string>{"int ID ;"};
-	grammar["<statement_list>"] = vector<string>{ "<statement_list_R> " };
-	grammar["<statement_list_R>"] = vector<string>{ " <statement>  <statement_list_R>", E };
-	grammar["<statement>"] = vector<string>{" <if_stat> ", " <while_stat>", "<for_stat>", "<read_stat>", "<write_stat>", "<compound_stat>", "<expression_stat> "};
-	grammar["<if_stat>"] = vector<string>{"if ( <expression> ) <statement> <else_part>"};
-	grammar["<else_part>"] = vector<string>{"else <statement>", E};
-	grammar["<while_stat>"] = vector<string>{"while ( <expression> )  <statement> "};
-	grammar["<for_stat>"] = vector<string>{"for (   <expression>   ;   <expression>   ;   <expression>   )  <statement> "};
-	grammar["<write_stat>"] = vector<string>{"write  <expression> ;"};
-	grammar["<read_stat>"] = vector<string>{"read ID ;"};
-	grammar["<compound_stat>"] = vector<string>{"{ <statement_list> }"};
-	grammar["<expression_stat>"] = vector<string>{" <expression> ;", ";"}; 
-	grammar["<expression>"] = vector<string>{"ID = <bool_expr>", "<bool_expr>"}; // 问题
-	grammar["<bool_expr>"] = vector<string>{"<additive_expr> <bool_expr_right>"};
-	grammar["<bool_expr_right>"] = vector<string>{"> <additive_expr>", "< <additive_expr>", 
-		">= <additive_expr>", "<= <additive_expr>", "== <additive_expr>", "!= <additive_expr>", E};
-	grammar["<additive_expr>"] = vector<string>{ "<term> <additive_expr_right>"};
-	grammar["<additive_expr_right>"] = vector<string>{"+ <term>", "- <term>", E};
-	grammar["<term>"] = vector<string>{ "<factor> <term_right>" };
-	grammar["<term_right>"] = vector<string>{"* <factor>", "/ <factor>", E};
-	grammar["<factor>"] = vector<string>{"( <expression> )", "ID", "NUM"};
+	//begin = "<program>";
+	//grammar["<program>"] = vector<string>{ "{  <declaration_list>  <statement_list>  }" };
+	//grammar["<declaration_list>"] = vector<string>{ "<declaration_list_R> " };
+	//grammar["<declaration_list_R>"] = vector<string>{ " <declaration_stat>  <declaration_list_R>", E };
+	//grammar["<declaration_stat>"] = vector<string>{"int ID ;"};
+	//grammar["<statement_list>"] = vector<string>{ "<statement_list_R> " };
+	//grammar["<statement_list_R>"] = vector<string>{ " <statement>  <statement_list_R>", E };
+	//grammar["<statement>"] = vector<string>{" <if_stat> ", " <while_stat>", "<for_stat>", "<read_stat>", "<write_stat>", "<compound_stat>", "<expression_stat> "};
+	//grammar["<if_stat>"] = vector<string>{"if ( <expression> ) <statement> <else_part>"};
+	//grammar["<else_part>"] = vector<string>{"else <statement>", E};
+	//grammar["<while_stat>"] = vector<string>{"while ( <expression> )  <statement> "};
+	//grammar["<for_stat>"] = vector<string>{"for (   <expression>   ;   <expression>   ;   <expression>   )  <statement> "};
+	//grammar["<write_stat>"] = vector<string>{"write  <expression> ;"};
+	//grammar["<read_stat>"] = vector<string>{"read ID ;"};
+	//grammar["<compound_stat>"] = vector<string>{"{ <statement_list> }"};
+	//grammar["<expression_stat>"] = vector<string>{" <expression> ;", ";"}; 
+	//grammar["<expression>"] = vector<string>{"ID = <bool_expr>", "<bool_expr>"}; // 问题
+	//grammar["<bool_expr>"] = vector<string>{"<additive_expr> <bool_expr_right>"};
+	//grammar["<bool_expr_right>"] = vector<string>{"> <additive_expr>", "< <additive_expr>", 
+	//	">= <additive_expr>", "<= <additive_expr>", "== <additive_expr>", "!= <additive_expr>", E};
+	//grammar["<additive_expr>"] = vector<string>{ "<term> <additive_expr_right>"};
+	//grammar["<additive_expr_right>"] = vector<string>{"+ <term>", "- <term>", E};
+	//grammar["<term>"] = vector<string>{ "<factor> <term_right>" };
+	//grammar["<term_right>"] = vector<string>{"* <factor>", "/ <factor>", E};
+	//grammar["<factor>"] = vector<string>{"( <expression> )", "ID", "NUM"};
 
 	for (map<string, vector<string> >::iterator it = grammar.begin(); it != grammar.end(); it++) {
 		first[it->first] = set<string>();

@@ -9,7 +9,7 @@
 #define INPUTPATH "E:\\Progress\\Compiler\\test.T"
 #define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
 
-#define nLLNRC_TEST1
+#define LLNRC_TEST1
 
 vector<Token> getTokens(string testStr) {
 	vector<Token> ret;
@@ -42,10 +42,10 @@ int main() {
 	LLNRec parser;
 	parser.showTable();
 	//string test = "id + id * id $";
-	//string test = "id + id * ( id + id ) $";
+	string test = "id + id * ( id + id ) $";
 	//string test = "( id + id ) * id * id + id $";
-	//vector<Token> testTokens = getTokens(test);
-	//parser.analyze(testTokens);
+	vector<Token> testTokens = getTokens(test);
+	parser.analyze(testTokens);
 #else
 	TESTscan2 lexer;
 	int lexerRes = lexer.scan(inputPath, outputPath);
