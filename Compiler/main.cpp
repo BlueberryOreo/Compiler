@@ -3,7 +3,7 @@
 #include "TESTscan.h"
 #include "TESTscan2.h"
 #include "RegExp.h"
-#include "LL.h"
+#include "RecursionParser.h"
 #include "LLNRec.h"
 
 #define INPUTPATH "E:\\Progress\\Compiler\\test.T"
@@ -25,57 +25,8 @@ vector<Token> getTokens(string testStr) {
 	return ret;
 }
 
-int main() {
-	
-	string inputPath, outputPath;
-#ifdef INPUTPATH
-	inputPath = INPUTPATH;
-	outputPath = OUTPUTPATH;
-#else
-	cout << "请输入输入文件位置:" << endl;
-	cin >> inputPath;
-	cout << "请输入输出文件位置:" << endl;
-	cin >> outputPath;
-#endif
-
-#ifdef LLNRC_TEST1
-	LLNRec parser;
-	parser.showTable();
-	//string test = "id + id * id $";
-	//string test = "id + id * ( id + id ) $";
-	string test = "( id + id ) * id * id + id $";
-	vector<Token> testTokens = getTokens(test);
-	parser.analyze(testTokens);
-#else
-	TESTscan2 lexer;
-	int lexerRes = lexer.scan(inputPath, outputPath);
-	if (lexerRes > 0) {
-		cout << "词法分析有误，编译终止！" << endl;
-		return 1;
-	}
-	cout << "词法分析成功！" << endl;
-	LLNRec parser;
-#ifdef OUTPUT_PREDICT_TABLE
-	parser.showTable();
-#endif
-	int parseRes = parser.analyze(inputPath, outputPath);
-	if (parseRes > 0) {
-		cout << "语法分析有误，编译终止！" << endl;
-		return 1;
-	}
-	cout << "语法分析成功！" << endl;
-#endif // LLNRC_TEST1
-
-	return 0;
-}
-
-//extern int TESTscan();
-//TESTscan2 lexer;
-//extern int TESTparse(string &source, string &lexerOut);
-////char Scanin[300], Scanout[300];
-////FILE* fin, * fout;
 //int main() {
-//
+//	
 //	string inputPath, outputPath;
 //#ifdef INPUTPATH
 //	inputPath = INPUTPATH;
@@ -87,20 +38,69 @@ int main() {
 //	cin >> outputPath;
 //#endif
 //
-//	int es = 0;
-//	//es = TESTscan();
-//	es = lexer.scan(inputPath, outputPath);
-//	if (es > 0) printf("词法分析有错, 编译终止!\n");
-//	else printf("词法分析成功!\n");
-//	//return 0;
-//	if (es == 0)
-//	{
-//		es = TESTparse(inputPath, outputPath);
-//		if (es > 0) printf("语法分析有错, 编译终止!\n");
-//		else printf("语法分析成功!\n");
+//#ifdef LLNRC_TEST1
+//	LLNRec parser;
+//	parser.showTable();
+//	//string test = "id + id * id $";
+//	//string test = "id + id * ( id + id ) $";
+//	string test = "( id + id ) * id * id + id $";
+//	vector<Token> testTokens = getTokens(test);
+//	parser.analyze(testTokens);
+//#else
+//	TESTscan2 lexer;
+//	int lexerRes = lexer.scan(inputPath, outputPath);
+//	if (lexerRes > 0) {
+//		cout << "词法分析有误，编译终止！" << endl;
+//		return 1;
 //	}
+//	cout << "词法分析成功！" << endl;
+//	LLNRec parser;
+//#ifdef OUTPUT_PREDICT_TABLE
+//	parser.showTable();
+//#endif
+//	int parseRes = parser.analyze(inputPath, outputPath);
+//	if (parseRes > 0) {
+//		cout << "语法分析有误，编译终止！" << endl;
+//		return 1;
+//	}
+//	cout << "语法分析成功！" << endl;
+//#endif // LLNRC_TEST1
+//
 //	return 0;
 //}
+
+//extern int TESTscan();
+TESTscan2 lexer;
+extern int TESTparse(string &source, string &lexerOut);
+//char Scanin[300], Scanout[300];
+//FILE* fin, * fout;
+int main() {
+
+	string inputPath, outputPath;
+#ifdef INPUTPATH
+	inputPath = INPUTPATH;
+	outputPath = OUTPUTPATH;
+#else
+	cout << "请输入输入文件位置:" << endl;
+	cin >> inputPath;
+	cout << "请输入输出文件位置:" << endl;
+	cin >> outputPath;
+#endif
+
+	int es = 0;
+	//es = TESTscan();
+	es = lexer.scan(inputPath, outputPath);
+	if (es > 0) printf("词法分析有错, 编译终止!\n");
+	else printf("词法分析成功!\n");
+	//return 0;
+	if (es == 0)
+	{
+		es = TESTparse(inputPath, outputPath);
+		if (es > 0) printf("语法分析有错, 编译终止!\n");
+		else printf("语法分析成功!\n");
+	}
+	return 0;
+}
 
 
 /*#include "TESTscan.h"

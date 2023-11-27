@@ -129,7 +129,7 @@
   <ItemGroup>
     <ClInclude Include="DFA.h" />
     <ClInclude Include="io.h" />
-    <ClInclude Include="LL.h" />
+    <ClInclude Include="RecursionParser.h" />
     <ClInclude Include="LLNRec.h" />
     <ClInclude Include="NFA.h" />
     <ClInclude Include="Node.h" />
@@ -141,7 +141,7 @@
   <ItemGroup>
     <ClCompile Include="DFA.cpp" />
     <ClCompile Include="io.cpp" />
-    <ClCompile Include="LL.cpp" />
+    <ClCompile Include="RecursionParser.cpp" />
     <ClCompile Include="LLNRec.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NFA.cpp" />

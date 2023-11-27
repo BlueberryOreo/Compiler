@@ -39,7 +39,7 @@
     <ClInclude Include="TESTscan2.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="LL.h">
+    <ClInclude Include="RecursionParser.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="LLNRec.h">
@@ -74,7 +74,7 @@
     <ClCompile Include="TESTscan2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="LL.cpp">
+    <ClCompile Include="RecursionParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LLNRec.cpp">
