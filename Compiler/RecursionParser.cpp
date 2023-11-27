@@ -23,12 +23,52 @@ int compoundList();
 ifstream fp;
 int currentPos, currentLine;
 int tab = 0;
+int labelId = 0;
+
+string outputPath = "./out.asm";
+class VarTable {
+public:
+	static int datap;
+	map<string, int> _vartable;
+	map<int, string> _dVartable;
+
+	int add(string &id) {
+		if (_vartable.find(id) == _vartable.end()) {
+			_vartable[id] = datap;
+			_dVartable[datap] = id;
+			datap++;
+			return 0;
+		}
+		return 1;
+	}
+
+	void lookUp(string &id, int &addr) {
+		if (_vartable.find(id) == _vartable.end()) addr = -1;
+		else addr = _vartable[id];
+	}
+} vartable;
+
+int VarTable::datap = 0;
+ofstream fout;
 
 void getToken(Token &t) {
 	fp >> t;
 	currentPos = t.pos;
 	currentLine = t.line;
 	//cout << currentPos << " " << currentLine << endl;
+}
+
+// 获取下一个Label id
+int getLabelId() {
+	return ++labelId;
+}
+
+void setLabel(int id) {
+	fout << "LABEL" << id << ":" << endl;
+}
+
+void jmpLabel(string opt, int id) {
+	fout << opt << " LABEL" << id << endl;
 }
 
 //语法分析程序
@@ -45,6 +85,7 @@ int TESTparse(string &source, string &lexerOut) {
 		cout << "Cannot find " << source << endl;
 		es = 10;
 	}
+	fout.open(outputPath.c_str());
 	if (es == 0) es = program();
 	printf(" == 语法分析结果 == \n");
 	switch (es)
@@ -59,8 +100,8 @@ int TESTparse(string &source, string &lexerOut) {
 	case 6: error(SYNTAXERROR, &sourcef, currentPos, "while语法错误", currentLine); break; // while语句错误
 	case 7: error(SYNTAXERROR, &sourcef, currentPos, "for语法错误", currentLine); break; // for语句错误
 	case 8: error(SYNTAXERROR, &sourcef, currentPos, "read语法错误", currentLine); break; // read语句错误
-	//case 9: printf("\n"); break;
-	//case 11: printf("\n"); break;
+	case 9: error(SYNTAXERROR, &sourcef, currentPos, "符号重定义", currentLine); break;
+	case 11: error(SYNTAXERROR, &sourcef, currentPos, "符号未定义", currentLine); break;
 	//case 12: printf("\n"); break;
 	//case 13: printf("\n"); break;
 	}
@@ -126,6 +167,7 @@ int expressionStat()
 	if (es != 0) return es;
 	Token t;
 	getToken(t);
+	if (es == 0) fout << "POP" << endl;
 #ifdef DEBUG_LL
 	cout << "<expression_stat> -> " << t << endl;
 #endif // DEBUG_LL
@@ -146,6 +188,9 @@ int expression()
 	cout << "<expr> -> " << t1 << endl;
 #endif // DEBUG_LL
 	if (t1.first == "ID"){
+		int addr;
+		vartable.lookUp(t1.second, addr);
+		if (addr < 0) return 11;
 		Token t2;
 		getToken(t2);
 #ifdef DEBUG_LL
@@ -154,6 +199,7 @@ int expression()
 		if (t2.first == "=") {//赋值表达式
 			es = boolExpr();
 			if (es > 0) return es;
+			fout << "STO " << addr << endl;
 		}
 		else {
 			//cout << "169here" << endl;
@@ -189,7 +235,15 @@ int boolExpr()
 #endif // DEBUG_LL
 
 	if (t.first == ">" || t.first == "<" || t.first == ">=" || t.first == "<=" || t.first == "==" || t.first == "!=") {
-		return additiveExpr();
+		es = additiveExpr();
+		if (es > 0) return es;
+		if (t.first == ">") fout << "GT" << endl;
+		if (t.first == "<") fout << "LES" << endl;
+		if (t.first == ">=") fout << "GE" << endl;
+		if (t.first == "<=") fout << "LE" << endl;
+		if (t.first == "==") fout << "EQ" << endl;
+		if (t.first == "!=") fout << "NOTEQ" << endl;
+		return es;
 	}
 	fp.seekg(tmp);
 	return es;
@@ -207,7 +261,13 @@ int additiveExpr()
 	cout << "<additive_expr> -> " << t << endl;
 #endif // DEBUG_LL
 
-	if (t.first == "+" || t.first == "-") return term();
+	if (t.first == "+" || t.first == "-") {
+		es = term();
+		if (es > 0) return es;
+		if (t.first == "+") fout << "ADD" << endl;
+		if (t.first == "-") fout << "SUB" << endl;
+		return es;
+	}
 	fp.seekg(tmp);
 	return es;
 }
@@ -224,7 +284,13 @@ int term()
 	cout << "<term> -> " << t << endl;
 #endif // DEBUG_LL
 
-	if (t.first == "*" || t.first == "/") return factor();
+	if (t.first == "*" || t.first == "/") {
+		es = factor();
+		if (es > 0) return es;
+		if (t.first == "*") fout << "MULT" << endl;
+		if (t.first == "/") fout << "DIV" << endl;
+		return es;
+	}
 	fp.seekg(tmp);
 	return es;
 }
@@ -246,8 +312,17 @@ int factor()
 		if (t.first != ")") return 1;
 		else return 0;
 	}
-	else if (t.first == "ID") return 0;
-	else if (t.first == "NUM") return 0;
+	else if (t.first == "ID") {
+		int addr;
+		vartable.lookUp(t.second, addr);
+		if (addr < 0) return 11;
+		fout << "LOAD " << addr << endl;
+		return 0;
+	}
+	else if (t.first == "NUM") {
+		fout << "LOADI " << t.second << endl;
+		return 0;
+	}
 	fp.seekg(begin);
 	return -1;
 }
@@ -266,15 +341,26 @@ int ifStat()
 	if (t.first != "(") return 5;
 	int es = expression();
 	if (es > 0) return es;
+
+	// addLabel
+	int labelA = getLabelId();
+	int labelB = getLabelId();
+
 	getToken(t);
 	if (t.first != ")") return 5;
+	jmpLabel("BRF", labelA);
 	es = statement();
 	if (es > 0) return es;
+
+	jmpLabel("BR", labelB);
+	setLabel(labelA);
+
 	auto tmp = fp.tellg();
 	getToken(t);
-	if (t.first == "else") return statement();
+	if (t.first == "else") es = statement();
 	else fp.seekg(tmp);
-	return 0;
+	setLabel(labelB);
+	return es;
 }
 
 // <while_stat> -> while(<expression>) <statement>
@@ -287,13 +373,26 @@ int whileStat()
 		fp.seekg(begin);
 		return -1;
 	}
+
+	// addLabel
+	int labelA = getLabelId();
+	int labelB = getLabelId();
+	setLabel(labelA);
+
 	getToken(t);
 	if (t.first != "(") return 6;
 	int es = expression();
 	if (es > 0) return es;
 	getToken(t);
 	if (t.first != ")") return 6;
-	return statement();
+	jmpLabel("BRF", labelB);
+	es = statement();
+	if (es > 0) return es;
+
+	jmpLabel("BR", labelA);
+	setLabel(labelB);
+
+	return es;
 }
 
 // <for_stat> -> for(<expression>;<expression>;<expression>) <statement>
@@ -308,18 +407,43 @@ int forStat()
 	}
 	getToken(t);
 	if (t.first != "(") return 7;
-	int es;
-	for (int i = 0; i < 2; i ++) {
-		es = expression();
-		if (es > 0) return es;
-		getToken(t);
-		if (t.first != ";") return 7;
-	}
+
+	int labels[4] = { getLabelId(), getLabelId(), getLabelId(), getLabelId() };
+
+	int es = expression();
+	if (es > 0) return es;
+	if (es == 0) fout << "POP" << endl;
+	getToken(t);
+	if (t.first != ";") return 7;
+
+	setLabel(labels[0]);
 	es = expression();
 	if (es > 0) return es;
+	if (es == 0) {
+		jmpLabel("BRF", labels[1]);
+		jmpLabel("BR", labels[2]);
+	}
+	getToken(t);
+	if (t.first != ";") return 7;
+
+	setLabel(labels[3]);
+	es = expression();
+	if (es > 0) return es;
+	if (es == 0) {
+		fout << "POP" << endl;
+		jmpLabel("BR", labels[0]);
+	}
+
 	getToken(t);
 	if (t.first != ")") return 7;
-	return statement();
+	setLabel(labels[2]);
+	es = statement();
+	if (es > 0) return es;
+
+	jmpLabel("BR", labels[3]);
+	setLabel(labels[1]);
+
+	return es;
 }
 
 //  <write_stat> -> write <expression>;
@@ -337,6 +461,9 @@ int writeStat()
 	cout << "346 es=" << es << endl;
 #endif
 	if (es > 0) return es;
+
+	fout << "OUT" << endl;
+
 	getToken(t);
 #ifdef DEBUG_LL
 	cout << "351 token=" << t << endl;
@@ -357,6 +484,14 @@ int readStat()
 	}
 	getToken(t);
 	if (t.first != "ID") return 8;
+
+	int addr;
+	vartable.lookUp(t.second, addr);
+	if (addr < 0) return 11;
+	fout << "IN" << endl;
+	fout << "STO " << addr << endl;
+	fout << "POP" << endl;
+
 	getToken(t);
 	if (t.first != ";") return 3;
 	return 0;
@@ -382,6 +517,9 @@ int declarationStat()
 #endif // DEBUG_LL
 
 	if (t.first != "ID") return 2;
+
+	if (vartable.add(t.second)) return 9;
+
 	getToken(t);
 #ifdef DEBUG_LL
 	cout << "341 <declaration_stat> -> " << t << endl;
