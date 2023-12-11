@@ -5,6 +5,7 @@
 #include "RegExp.h"
 #include "RecursionParser.h"
 #include "LLNRec.h"
+#include "TVM.h"
 
 #define INPUTPATH "E:\\Progress\\Compiler\\test.T"
 #define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
@@ -99,7 +100,16 @@ int main() {
 		if (es > 0) printf("语法分析有错, 编译终止!\n");
 		else printf("语法分析成功!\n");
 	}
-	return 0;
+
+	if (es) return es;
+
+	TVM vm;
+	es = vm.run("./out.asm");
+	if (es == 1) {
+		cout << "Runtime Error." << endl;
+	}
+
+	return es;
 }
 
 
