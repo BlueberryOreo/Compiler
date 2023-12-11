@@ -30,12 +30,12 @@ class VarTable {
 public:
 	static int datap;
 	map<string, int> _vartable;
-	map<int, string> _dVartable;
+	//map<int, string> _dVartable;
 
 	int add(string &id) {
 		if (_vartable.find(id) == _vartable.end()) {
 			_vartable[id] = datap;
-			_dVartable[datap] = id;
+			//_dVartable[datap] = id;
 			datap++;
 			return 0;
 		}
