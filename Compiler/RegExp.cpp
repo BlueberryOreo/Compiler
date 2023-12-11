@@ -126,7 +126,7 @@ void RegExp::init()
 	//cout << dfa.size() << endl;
 	//dfa.outputDFA();
 	dfa.simplify();
-	dfa.outputDFA();
+	//dfa.outputDFA();
 }
 
 void RegExp::readTree()

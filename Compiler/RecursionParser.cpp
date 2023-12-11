@@ -87,7 +87,7 @@ int TESTparse(string &source, string &lexerOut) {
 	}
 	fout.open(outputPath.c_str());
 	if (es == 0) es = program();
-	printf(" == 语法分析结果 == \n");
+	//printf(" == 语法分析结果 == \n");
 	switch (es)
 	{
 	case 0: printf("语法分析成功\n"); break;

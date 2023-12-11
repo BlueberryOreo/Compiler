@@ -36,7 +36,7 @@ void DFA::createDFA(NFA& nfa, set<string> &input)
 		}
 		//ds.outputUnsigned();
 	}
-	cout << "DFA construct end" << endl;
+	//cout << "DFA construct end" << endl;
 }
 
 int DFA::getState()

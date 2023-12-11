@@ -7,7 +7,7 @@
 #include "LLNRec.h"
 #include "TVM.h"
 
-#define INPUTPATH "E:\\Progress\\Compiler\\test.T"
+#define _INPUTPATH "E:\\Progress\\Compiler\\test.T"
 #define OUTPUTPATH "E:\\Progress\\Compiler\\out.T"
 
 #define nLLNRC_TEST1
@@ -75,18 +75,25 @@ TESTscan2 lexer;
 extern int TESTparse(string &source, string &lexerOut);
 //char Scanin[300], Scanout[300];
 //FILE* fin, * fout;
-int main() {
+int main(int argc, char* argv[]) {
 
 	string inputPath, outputPath;
 #ifdef INPUTPATH
 	inputPath = INPUTPATH;
 	outputPath = OUTPUTPATH;
 #else
-	cout << "请输入输入文件位置:" << endl;
-	cin >> inputPath;
-	cout << "请输入输出文件位置:" << endl;
-	cin >> outputPath;
+	//cout << "请输入输入文件位置:" << endl;
+	//cin >> inputPath;
+	//cout << "请输入输出文件位置:" << endl;
+	//cin >> outputPath;
+	inputPath = argv[1];
+	if (argc > 2) {
+		outputPath = argv[2];
+	}
+	else outputPath = "a.T";
 #endif
+
+	//cout << inputPath << " " << outputPath << endl;
 
 	int es = 0;
 	//es = TESTscan();
